@@ -1,1 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, sans-serif;
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, sans-serif;
+
+  --color-brand: var(--color-emerald-500);
+  --color-brand-hover: var(--color-emerald-600);
+  --color-brand-ink: var(--color-emerald-950);
+  --color-brand-soft: var(--color-emerald-50);
+  --color-brand-pill: var(--color-emerald-100);
+
+  --radius-card: 1rem;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-emerald-50);
+  color: var(--color-emerald-950);
+}
