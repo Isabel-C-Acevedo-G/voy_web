@@ -1,5 +1,6 @@
-import { Component, computed, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, computed, inject, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter } from 'rxjs';
 
 import { VoyRol } from '../../core/models/auth.model';
 import { AuthService } from '../../core/services/auth.service';
@@ -18,9 +19,11 @@ interface NavLink {
 })
 export class Sidebar {
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly user = this.auth.user;
   readonly rol = this.auth.rol;
+  readonly open = signal(false);
 
   private readonly allLinks: NavLink[] = [
     { path: '/', label: 'Inicio' },
@@ -45,6 +48,20 @@ export class Sidebar {
       return !!rol && link.roles.includes(rol as VoyRol);
     });
   });
+
+  constructor() {
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(() => this.open.set(false));
+  }
+
+  toggle(): void {
+    this.open.update((v) => !v);
+  }
+
+  close(): void {
+    this.open.set(false);
+  }
 
   logout(): void {
     this.auth.logout();
