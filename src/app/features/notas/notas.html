@@ -1,0 +1,71 @@
+<section class="space-y-6">
+  <header>
+    <h1 class="text-3xl font-extrabold text-emerald-950">Notas</h1>
+    <p class="text-emerald-700">
+      Solo lectura para vigilante. El alta la hace el administrador (Fase 5).
+    </p>
+  </header>
+
+  @if (error(); as err) {
+    <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
+  }
+
+  <form
+    class="flex flex-wrap items-end gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
+    [formGroup]="filtros"
+    (ngSubmit)="reload()"
+  >
+    <label class="space-y-1">
+      <span class="text-sm font-medium text-emerald-800">Tipo movimiento</span>
+      <select
+        formControlName="tipoMovimiento"
+        class="rounded-xl border border-emerald-200 px-3 py-2"
+      >
+        <option value="">Todos</option>
+        <option value="ingreso">ingreso</option>
+        <option value="salida">salida</option>
+      </select>
+    </label>
+    <label class="space-y-1">
+      <span class="text-sm font-medium text-emerald-800">idMovimiento</span>
+      <input
+        type="number"
+        formControlName="idMovimiento"
+        class="w-32 rounded-xl border border-emerald-200 px-3 py-2"
+      />
+    </label>
+    <button
+      type="submit"
+      class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600"
+    >
+      Filtrar
+    </button>
+  </form>
+
+  @if (loading()) {
+    <p class="text-emerald-700">Cargando…</p>
+  } @else if (items().length === 0) {
+    <p class="rounded-xl border border-dashed border-emerald-200 bg-white p-6 text-emerald-700">
+      No hay notas todavía.
+    </p>
+  } @else {
+    <ul class="space-y-3">
+      @for (n of items(); track n.idNota) {
+        <li
+          class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
+        >
+          <div class="flex flex-wrap items-center gap-2">
+            <span
+              class="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800"
+            >
+              {{ n.tipoMovimiento }} #{{ n.idMovimiento }}
+            </span>
+            <span class="text-xs text-emerald-600">{{ n.fecha | date: 'short' }}</span>
+          </div>
+          <p class="mt-2 text-emerald-900">{{ n.texto }}</p>
+          <p class="mt-1 text-xs text-emerald-600">Admin #{{ n.idAdministrador }}</p>
+        </li>
+      }
+    </ul>
+  }
+</section>
