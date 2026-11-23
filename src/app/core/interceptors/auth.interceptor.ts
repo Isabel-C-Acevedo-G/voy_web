@@ -1,0 +1,24 @@
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+
+import { environment } from '../../../environments/environment';
+import { AuthService } from '../services/auth.service';
+
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const auth = inject(AuthService);
+  const token = auth.token();
+  const isApi = req.url.startsWith(environment.apiUrl);
+  const isAuthPublic =
+    req.url.startsWith(`${environment.apiUrl}/auth/login`) ||
+    req.url.startsWith(`${environment.apiUrl}/auth/register`);
+
+  if (!token || !isApi || isAuthPublic) {
+    return next(req);
+  }
+
+  return next(
+    req.clone({
+      setHeaders: { Authorization: `Bearer ${token}` },
+    }),
+  );
+};
