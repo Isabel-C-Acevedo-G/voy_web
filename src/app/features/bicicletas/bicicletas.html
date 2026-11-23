@@ -1,25 +1,16 @@
 <app-form-list-page>
   <div pageTitle>
-    <header class="flex flex-wrap items-end justify-between gap-3">
-      <div>
-        <h1 class="text-3xl font-extrabold text-emerald-950">
-          {{ isAdmin() ? 'Bicicletas' : 'Mis bicicletas' }}
-        </h1>
-        <p class="text-emerald-700">
-          @if (isAdmin()) {
-            Listado general y cambio de estado (activa / inactiva).
-          } @else {
-            Alta y edición de tus bicicletas registradas.
-          }
-        </p>
-      </div>
-      <button
-        type="button"
-        class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600"
-        (click)="startCreate()"
-      >
-        Nueva bicicleta
-      </button>
+    <header>
+      <h1 class="text-3xl font-extrabold text-emerald-950">
+        {{ isAdmin() ? 'Bicicletas' : 'Mis bicicletas' }}
+      </h1>
+      <p class="text-emerald-700">
+        @if (isAdmin()) {
+          Listado general y cambio de estado (activa / inactiva).
+        } @else {
+          Alta y edición de tus bicicletas registradas.
+        }
+      </p>
     </header>
   </div>
 
