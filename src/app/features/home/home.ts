@@ -2,12 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 
 import { environment } from '../../../environments/environment';
 import { SystemService } from '../../core/services/system.service';
+import { Loading } from '../../shared/loading/loading';
 
 type ApiStatus = 'loading' | 'online' | 'offline';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [Loading],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

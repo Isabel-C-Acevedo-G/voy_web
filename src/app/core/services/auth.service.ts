@@ -6,6 +6,7 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { RegisterRequest, TokenResponse, VoyRol } from '../models/auth.model';
 import { Usuario } from '../models/usuario.model';
+import { AlertService } from './alert.service';
 
 const TOKEN_KEY = 'voy_token';
 const ROL_KEY = 'voy_rol';
@@ -14,6 +15,7 @@ const ROL_KEY = 'voy_rol';
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  private readonly alerts = inject(AlertService);
   private readonly baseUrl = environment.apiUrl;
 
   private readonly tokenSignal = signal<string | null>(localStorage.getItem(TOKEN_KEY));
@@ -69,6 +71,7 @@ export class AuthService {
     this.clearSession();
     if (message) {
       this.flashSignal.set(message);
+      this.alerts.warning(message);
     }
     void this.router.navigate(['/login']);
   }

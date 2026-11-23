@@ -19,7 +19,9 @@
 
     @switch (status()) {
       @case ('loading') {
-        <p class="mt-4 text-emerald-700">Conectando…</p>
+        <div class="mt-4">
+          <app-loading label="Conectando con la API…" />
+        </div>
       }
       @case ('online') {
         <div class="mt-4 space-y-1">

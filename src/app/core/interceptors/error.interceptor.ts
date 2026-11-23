@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
+import { AlertService } from '../services/alert.service';
 import { AuthService } from '../services/auth.service';
 
 function detailMessage(err: HttpErrorResponse): string {
@@ -26,6 +27,7 @@ function isAuthPublic(url: string): boolean {
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
+  const alerts = inject(AlertService);
   const router = inject(Router);
 
   return next(req).pipe(
@@ -45,7 +47,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         if (message.toLowerCase().includes('inactivo')) {
           auth.logout('Usuario inactivo');
         } else if (!isAuthPublic(req.url)) {
-          auth.setFlash(message || 'No tienes permiso para esta operación');
+          const text = message || 'No tienes permiso para esta operación';
+          auth.setFlash(text);
+          alerts.warning(text);
           void router.navigate(['/forbidden']);
         }
         return throwError(() => err);
