@@ -1,107 +1,114 @@
-<section class="space-y-6">
-  <header>
-    <h1 class="text-3xl font-extrabold text-emerald-950">Incidentes</h1>
-    <p class="text-emerald-700">Alta y seguimiento (abrir / cerrar).</p>
-  </header>
+<app-list-page>
+  <div listHeader class="space-y-4">
+    <header>
+      <h1 class="text-3xl font-extrabold text-emerald-950">Incidentes</h1>
+      <p class="text-emerald-700">Alta y seguimiento (abrir / cerrar).</p>
+    </header>
 
-  @if (error(); as err) {
-    <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
-  }
+    @if (error(); as err) {
+      <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
+    }
 
-  <form
-    class="grid gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm sm:grid-cols-2"
-    [formGroup]="form"
-    (ngSubmit)="submit()"
-  >
-    <label class="block space-y-1">
-      <span class="text-sm font-medium text-emerald-800">Tipo</span>
-      <select formControlName="tipo" class="w-full rounded-xl border border-emerald-200 px-3 py-2">
-        @for (t of tipos; track t) {
-          <option [value]="t">{{ t }}</option>
-        }
-      </select>
-    </label>
-    <label class="block space-y-1">
-      <span class="text-sm font-medium text-emerald-800">idBicicleta (opc.)</span>
-      <input
-        type="number"
-        formControlName="idBicicleta"
-        class="w-full rounded-xl border border-emerald-200 px-3 py-2"
-      />
-    </label>
-    <label class="block space-y-1 sm:col-span-2">
-      <span class="text-sm font-medium text-emerald-800">Descripción</span>
-      <textarea
-        formControlName="descripcion"
-        rows="3"
-        class="w-full rounded-xl border border-emerald-200 px-3 py-2"
-      ></textarea>
-    </label>
-    <label class="block space-y-1">
-      <span class="text-sm font-medium text-emerald-800">idUsuario involucrado (opc.)</span>
-      <input
-        type="number"
-        formControlName="idUsuarioInvolucrado"
-        class="w-full rounded-xl border border-emerald-200 px-3 py-2"
-      />
-    </label>
-    <div class="flex items-end">
-      <button
-        type="submit"
-        class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
-        [disabled]="saving()"
-      >
-        {{ saving() ? 'Guardando…' : 'Registrar incidente' }}
-      </button>
-    </div>
-  </form>
-
-  @if (loading()) {
-    <p class="text-emerald-700">Cargando…</p>
-  } @else {
-    <ul class="space-y-3">
-      @for (i of pageItems(); track i.idIncidente) {
-        <li
-          class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
+    <form
+      class="grid gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm sm:grid-cols-2"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+    >
+      <label class="block space-y-1">
+        <span class="text-sm font-medium text-emerald-800">Tipo</span>
+        <select formControlName="tipo" class="w-full rounded-xl border border-emerald-200 px-3 py-2">
+          @for (t of tipos; track t) {
+            <option [value]="t">{{ t }}</option>
+          }
+        </select>
+      </label>
+      <label class="block space-y-1">
+        <span class="text-sm font-medium text-emerald-800">idBicicleta (opc.)</span>
+        <input
+          type="number"
+          formControlName="idBicicleta"
+          class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+        />
+      </label>
+      <label class="block space-y-1 sm:col-span-2">
+        <span class="text-sm font-medium text-emerald-800">Descripción</span>
+        <textarea
+          formControlName="descripcion"
+          rows="3"
+          class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+        ></textarea>
+      </label>
+      <label class="block space-y-1">
+        <span class="text-sm font-medium text-emerald-800">idUsuario involucrado (opc.)</span>
+        <input
+          type="number"
+          formControlName="idUsuarioInvolucrado"
+          class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+        />
+      </label>
+      <div class="flex items-end">
+        <button
+          type="submit"
+          class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+          [disabled]="saving()"
         >
-          <div class="flex flex-wrap items-start justify-between gap-2">
-            <div>
-              <p class="font-semibold text-emerald-950">
-                #{{ i.idIncidente }} · {{ i.tipo }}
-              </p>
-              <p class="mt-1 text-sm text-emerald-800">{{ i.descripcion }}</p>
-              <p class="mt-1 text-xs text-emerald-600">{{ i.fecha | date: 'short' }}</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <span
-                class="rounded-full px-2.5 py-0.5 text-xs font-medium"
-                [class]="
-                  i.estado === 'abierto'
-                    ? 'bg-amber-100 text-amber-800'
-                    : 'bg-emerald-100 text-emerald-800'
-                "
-              >
-                {{ i.estado }}
-              </span>
-              @if (i.estado === 'abierto') {
-                <button
-                  type="button"
-                  class="rounded-xl border border-emerald-200 px-3 py-1 text-sm text-emerald-800 hover:bg-emerald-50"
-                  (click)="cerrar(i)"
+          {{ saving() ? 'Guardando…' : 'Registrar incidente' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div listBody>
+    @if (loading()) {
+      <p class="text-emerald-700">Cargando…</p>
+    } @else {
+      <ul class="space-y-3 pb-2">
+        @for (i of pageItems(); track i.idIncidente) {
+          <li
+            class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
+          >
+            <div class="flex flex-wrap items-start justify-between gap-2">
+              <div>
+                <p class="font-semibold text-emerald-950">
+                  #{{ i.idIncidente }} · {{ i.tipo }}
+                </p>
+                <p class="mt-1 text-sm text-emerald-800">{{ i.descripcion }}</p>
+                <p class="mt-1 text-xs text-emerald-600">{{ i.fecha | date: 'short' }}</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="rounded-full px-2.5 py-0.5 text-xs font-medium"
+                  [class]="
+                    i.estado === 'abierto'
+                      ? 'bg-amber-100 text-amber-800'
+                      : 'bg-emerald-100 text-emerald-800'
+                  "
                 >
-                  Cerrar
-                </button>
-              }
+                  {{ i.estado }}
+                </span>
+                @if (i.estado === 'abierto') {
+                  <button
+                    type="button"
+                    class="rounded-xl border border-emerald-200 px-3 py-1 text-sm text-emerald-800 hover:bg-emerald-50"
+                    (click)="cerrar(i)"
+                  >
+                    Cerrar
+                  </button>
+                }
+              </div>
             </div>
-          </div>
-        </li>
-      }
-    </ul>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div listFooter>
     <app-pagination
       [total]="items().length"
       [pageSize]="pageSize"
       [page]="page()"
       (pageChange)="page.set($event)"
     />
-  }
-</section>
+  </div>
+</app-list-page>

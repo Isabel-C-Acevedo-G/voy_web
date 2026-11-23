@@ -7,12 +7,14 @@ import { Espacio } from '../../core/models/espacio.model';
 import { AuthService } from '../../core/services/auth.service';
 import { EspacioService } from '../../core/services/espacio.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
+import { ListPage } from '../../shared/list-page/list-page';
 
 @Component({
   selector: 'app-espacios',
-  imports: [ReactiveFormsModule, DatePipe, Pagination],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, ListPage],
   templateUrl: './espacios.html',
   styleUrl: './espacios.css',
+  host: { class: 'block h-full min-h-0' },
 })
 export class Espacios implements OnInit {
   private readonly espaciosApi = inject(EspacioService);

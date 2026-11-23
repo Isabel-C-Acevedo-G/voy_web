@@ -11,6 +11,7 @@ type ApiStatus = 'loading' | 'online' | 'offline';
   imports: [Loading],
   templateUrl: './home.html',
   styleUrl: './home.css',
+  host: { class: 'block h-full min-h-0 overflow-y-auto' },
 })
 export class Home implements OnInit {
   private readonly system = inject(SystemService);

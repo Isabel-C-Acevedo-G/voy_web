@@ -9,12 +9,14 @@ import { AuthService } from '../../core/services/auth.service';
 import { EspacioService } from '../../core/services/espacio.service';
 import { ReservaService } from '../../core/services/reserva.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
+import { ListPage } from '../../shared/list-page/list-page';
 
 @Component({
   selector: 'app-reservas',
-  imports: [ReactiveFormsModule, DatePipe, Pagination],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, ListPage],
   templateUrl: './reservas.html',
   styleUrl: './reservas.css',
+  host: { class: 'block h-full min-h-0' },
 })
 export class Reservas implements OnInit {
   private readonly reservasApi = inject(ReservaService);

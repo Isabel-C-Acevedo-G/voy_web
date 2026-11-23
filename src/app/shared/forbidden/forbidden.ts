@@ -8,6 +8,7 @@ import { AuthService } from '../../core/services/auth.service';
   imports: [RouterLink],
   templateUrl: './forbidden.html',
   styleUrl: './forbidden.css',
+  host: { class: 'block h-full min-h-0 overflow-y-auto' },
 })
 export class Forbidden {
   private readonly auth = inject(AuthService);

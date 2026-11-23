@@ -12,12 +12,14 @@ import {
   ReporteUsuariosFrecuentes,
 } from '../../core/services/reporte.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
+import { ListPage } from '../../shared/list-page/list-page';
 
 @Component({
   selector: 'app-reportes',
-  imports: [ReactiveFormsModule, KeyValuePipe, Pagination],
+  imports: [ReactiveFormsModule, KeyValuePipe, Pagination, ListPage],
   templateUrl: './reportes.html',
   styleUrl: './reportes.css',
+  host: { class: 'block h-full min-h-0' },
 })
 export class Reportes {
   private readonly reportesApi = inject(ReporteService);

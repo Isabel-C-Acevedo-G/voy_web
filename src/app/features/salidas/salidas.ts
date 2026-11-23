@@ -9,12 +9,14 @@ import { AuthService } from '../../core/services/auth.service';
 import { IngresoService } from '../../core/services/ingreso.service';
 import { SalidaService } from '../../core/services/salida.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
+import { ListPage } from '../../shared/list-page/list-page';
 
 @Component({
   selector: 'app-salidas',
-  imports: [ReactiveFormsModule, DatePipe, Pagination],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, ListPage],
   templateUrl: './salidas.html',
   styleUrl: './salidas.css',
+  host: { class: 'block h-full min-h-0' },
 })
 export class Salidas implements OnInit {
   private readonly salidasApi = inject(SalidaService);

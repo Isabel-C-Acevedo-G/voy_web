@@ -7,12 +7,14 @@ import { Incidente, TipoIncidente } from '../../core/models/incidente.model';
 import { AuthService } from '../../core/services/auth.service';
 import { IncidenteService } from '../../core/services/incidente.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
+import { ListPage } from '../../shared/list-page/list-page';
 
 @Component({
   selector: 'app-incidentes',
-  imports: [ReactiveFormsModule, DatePipe, Pagination],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, ListPage],
   templateUrl: './incidentes.html',
   styleUrl: './incidentes.css',
+  host: { class: 'block h-full min-h-0' },
 })
 export class Incidentes implements OnInit {
   private readonly incidentesApi = inject(IncidenteService);

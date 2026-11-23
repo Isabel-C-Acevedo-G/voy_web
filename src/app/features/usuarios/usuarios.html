@@ -1,119 +1,126 @@
-<section class="space-y-6">
-  <header>
-    <h1 class="text-3xl font-extrabold text-emerald-950">Usuarios</h1>
-    <p class="text-emerald-700">Gestión de rol y estado (auditoría en backend).</p>
-  </header>
+<app-list-page>
+  <div listHeader class="space-y-4">
+    <header>
+      <h1 class="text-3xl font-extrabold text-emerald-950">Usuarios</h1>
+      <p class="text-emerald-700">Gestión de rol y estado (auditoría en backend).</p>
+    </header>
 
-  @if (error(); as err) {
-    <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
-  }
+    @if (error(); as err) {
+      <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
+    }
 
-  @if (selectedId(); as id) {
-    <form
-      class="space-y-3 rounded-[var(--radius-card)] border border-emerald-200 bg-white p-5 shadow-sm"
-      [formGroup]="form"
-      (ngSubmit)="submitGestion()"
-    >
-      <h2 class="text-lg font-semibold text-emerald-900">Gestionar usuario #{{ id }}</h2>
-      <div class="grid gap-3 sm:grid-cols-2">
+    @if (selectedId(); as id) {
+      <form
+        class="space-y-3 rounded-[var(--radius-card)] border border-emerald-200 bg-white p-5 shadow-sm"
+        [formGroup]="form"
+        (ngSubmit)="submitGestion()"
+      >
+        <h2 class="text-lg font-semibold text-emerald-900">Gestionar usuario #{{ id }}</h2>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <label class="block space-y-1">
+            <span class="text-sm font-medium text-emerald-800">Estado</span>
+            <select
+              formControlName="nuevoEstado"
+              class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+            >
+              <option value="activo">activo</option>
+              <option value="inactivo">inactivo</option>
+            </select>
+          </label>
+          <label class="block space-y-1">
+            <span class="text-sm font-medium text-emerald-800">Rol</span>
+            <select
+              formControlName="nuevoRol"
+              class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+            >
+              @for (r of roles(); track r.idRol) {
+                <option [value]="r.idRol">{{ r.nombre }}</option>
+              }
+            </select>
+          </label>
+        </div>
         <label class="block space-y-1">
-          <span class="text-sm font-medium text-emerald-800">Estado</span>
-          <select
-            formControlName="nuevoEstado"
+          <span class="text-sm font-medium text-emerald-800">Motivo</span>
+          <input
+            formControlName="motivo"
             class="w-full rounded-xl border border-emerald-200 px-3 py-2"
-          >
-            <option value="activo">activo</option>
-            <option value="inactivo">inactivo</option>
-          </select>
+            placeholder="Obligatorio para auditoría"
+          />
         </label>
-        <label class="block space-y-1">
-          <span class="text-sm font-medium text-emerald-800">Rol</span>
-          <select
-            formControlName="nuevoRol"
-            class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+        <div class="flex gap-2">
+          <button
+            type="submit"
+            class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+            [disabled]="saving()"
           >
-            @for (r of roles(); track r.idRol) {
-              <option [value]="r.idRol">{{ r.nombre }}</option>
-            }
-          </select>
-        </label>
-      </div>
-      <label class="block space-y-1">
-        <span class="text-sm font-medium text-emerald-800">Motivo</span>
-        <input
-          formControlName="motivo"
-          class="w-full rounded-xl border border-emerald-200 px-3 py-2"
-          placeholder="Obligatorio para auditoría"
-        />
-      </label>
-      <div class="flex gap-2">
-        <button
-          type="submit"
-          class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
-          [disabled]="saving()"
-        >
-          {{ saving() ? 'Guardando…' : 'Aplicar' }}
-        </button>
-        <button
-          type="button"
-          class="rounded-xl border border-emerald-200 px-4 py-2 text-sm text-emerald-800"
-          (click)="cancelGestion()"
-        >
-          Cancelar
-        </button>
-      </div>
-    </form>
-  }
+            {{ saving() ? 'Guardando…' : 'Aplicar' }}
+          </button>
+          <button
+            type="button"
+            class="rounded-xl border border-emerald-200 px-4 py-2 text-sm text-emerald-800"
+            (click)="cancelGestion()"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    }
+  </div>
 
-  @if (loading()) {
-    <p class="text-emerald-700">Cargando…</p>
-  } @else {
-    <ul class="space-y-3">
-      @for (u of pageItems(); track u.idUsuario) {
-        <li
-          class="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
-        >
-          <div>
-            <p class="font-semibold text-emerald-950">
-              #{{ u.idUsuario }} · {{ u.nombre }}
-            </p>
-            <p class="text-sm text-emerald-700">{{ u.correo }} · {{ u.documento }}</p>
-            <p class="mt-1 text-xs text-emerald-600">
-              Alta {{ u.creadoEn | date: 'short' }}
-            </p>
-          </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <span
-              class="rounded-full px-2.5 py-0.5 text-xs font-medium"
-              [class]="
-                u.estado === 'activo'
-                  ? 'bg-emerald-100 text-emerald-800'
-                  : 'bg-slate-100 text-slate-600'
-              "
-            >
-              {{ u.estado }}
-            </span>
-            <span
-              class="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-800"
-            >
-              {{ rolNombre(u.idRol) }}
-            </span>
-            <button
-              type="button"
-              class="rounded-xl border border-emerald-200 px-3 py-1.5 text-sm text-emerald-800 hover:bg-emerald-50"
-              (click)="openGestion(u)"
-            >
-              Gestionar
-            </button>
-          </div>
-        </li>
-      }
-    </ul>
+  <div listBody>
+    @if (loading()) {
+      <p class="text-emerald-700">Cargando…</p>
+    } @else {
+      <ul class="space-y-3 pb-2">
+        @for (u of pageItems(); track u.idUsuario) {
+          <li
+            class="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
+          >
+            <div>
+              <p class="font-semibold text-emerald-950">
+                #{{ u.idUsuario }} · {{ u.nombre }}
+              </p>
+              <p class="text-sm text-emerald-700">{{ u.correo }} · {{ u.documento }}</p>
+              <p class="mt-1 text-xs text-emerald-600">
+                Alta {{ u.creadoEn | date: 'short' }}
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span
+                class="rounded-full px-2.5 py-0.5 text-xs font-medium"
+                [class]="
+                  u.estado === 'activo'
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : 'bg-slate-100 text-slate-600'
+                "
+              >
+                {{ u.estado }}
+              </span>
+              <span
+                class="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-800"
+              >
+                {{ rolNombre(u.idRol) }}
+              </span>
+              <button
+                type="button"
+                class="rounded-xl border border-emerald-200 px-3 py-1.5 text-sm text-emerald-800 hover:bg-emerald-50"
+                (click)="openGestion(u)"
+              >
+                Gestionar
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div listFooter>
     <app-pagination
       [total]="items().length"
       [pageSize]="pageSize"
       [page]="page()"
       (pageChange)="page.set($event)"
     />
-  }
-</section>
+  </div>
+</app-list-page>

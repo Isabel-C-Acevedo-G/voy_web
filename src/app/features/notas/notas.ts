@@ -7,12 +7,14 @@ import { Nota, TipoMovimiento } from '../../core/models/nota.model';
 import { AuthService } from '../../core/services/auth.service';
 import { NotaService } from '../../core/services/nota.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
+import { ListPage } from '../../shared/list-page/list-page';
 
 @Component({
   selector: 'app-notas',
-  imports: [ReactiveFormsModule, DatePipe, Pagination],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, ListPage],
   templateUrl: './notas.html',
   styleUrl: './notas.css',
+  host: { class: 'block h-full min-h-0' },
 })
 export class Notas implements OnInit {
   private readonly notasApi = inject(NotaService);

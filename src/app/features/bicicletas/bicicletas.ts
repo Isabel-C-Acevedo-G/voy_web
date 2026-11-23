@@ -7,12 +7,14 @@ import { Bicicleta, TipoBicicleta } from '../../core/models/bicicleta.model';
 import { AuthService } from '../../core/services/auth.service';
 import { BicicletaService } from '../../core/services/bicicleta.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
+import { ListPage } from '../../shared/list-page/list-page';
 
 @Component({
   selector: 'app-bicicletas',
-  imports: [ReactiveFormsModule, DatePipe, Pagination],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, ListPage],
   templateUrl: './bicicletas.html',
   styleUrl: './bicicletas.css',
+  host: { class: 'block h-full min-h-0' },
 })
 export class Bicicletas implements OnInit {
   private readonly bicicletasApi = inject(BicicletaService);

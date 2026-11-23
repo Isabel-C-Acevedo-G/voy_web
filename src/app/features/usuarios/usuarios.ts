@@ -9,12 +9,14 @@ import { AuthService } from '../../core/services/auth.service';
 import { RolService } from '../../core/services/rol.service';
 import { UsuarioService } from '../../core/services/usuario.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
+import { ListPage } from '../../shared/list-page/list-page';
 
 @Component({
   selector: 'app-usuarios',
-  imports: [ReactiveFormsModule, DatePipe, Pagination],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, ListPage],
   templateUrl: './usuarios.html',
   styleUrl: './usuarios.css',
+  host: { class: 'block h-full min-h-0' },
 })
 export class Usuarios implements OnInit {
   private readonly usuariosApi = inject(UsuarioService);

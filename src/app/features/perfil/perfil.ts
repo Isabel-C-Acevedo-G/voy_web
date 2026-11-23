@@ -10,6 +10,7 @@ import { UsuarioService } from '../../core/services/usuario.service';
   imports: [ReactiveFormsModule],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
+  host: { class: 'block h-full min-h-0 overflow-y-auto' },
 })
 export class Perfil implements OnInit {
   private readonly auth = inject(AuthService);
