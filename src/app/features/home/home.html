@@ -1,0 +1,55 @@
+<section class="space-y-6">
+  <header class="space-y-2">
+    <h1 class="text-3xl font-extrabold text-emerald-950">Bienvenido a VOY</h1>
+    <p class="text-emerald-800">Gestión de parqueaderos de bicicletas (Medellín).</p>
+  </header>
+
+  <article
+    class="rounded-[var(--radius-card)] bg-gradient-to-br from-emerald-400 to-emerald-600 p-6 text-white shadow-sm"
+  >
+    <h2 class="text-xl font-bold">Parqueadero VOY</h2>
+    <p class="mt-1 text-sm text-emerald-50">Tema Emerald · shell Fase 1</p>
+  </article>
+
+  <article
+    class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-6 shadow-sm"
+  >
+    <h2 class="text-lg font-semibold text-emerald-950">Estado de la API</h2>
+    <p class="mt-1 text-sm text-emerald-600">{{ apiUrl }}</p>
+
+    @switch (status()) {
+      @case ('loading') {
+        <div class="mt-4">
+          <app-loading label="Conectando con la API…" />
+        </div>
+      }
+      @case ('online') {
+        <div class="mt-4 space-y-1">
+          <p class="flex items-center gap-2 font-medium text-emerald-700">
+            <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+            API conectada — {{ message() }}
+          </p>
+          <p class="text-sm text-emerald-700">
+            X-Request-ID: <code>{{ requestId() ?? '—' }}</code>
+          </p>
+          <p class="text-sm text-emerald-700">
+            X-Process-Time: <code>{{ processTime() ?? '—' }}</code>
+          </p>
+          @if (!requestId()) {
+            <p class="mt-2 text-xs text-emerald-600">
+              Si ves “—”, la API responde pero aún no expone esas cabeceras en CORS
+              (<code>expose_headers</code>).
+            </p>
+          }
+        </div>
+      }
+      @case ('offline') {
+        <div class="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">
+          No se pudo contactar con la API. ¿Está corriendo
+          <code>uv run uvicorn app.main:app --reload</code> en
+          <code>voy_api</code> y tiene <code>http://localhost:4200</code> en CORS?
+        </div>
+      }
+    }
+  </article>
+</section>

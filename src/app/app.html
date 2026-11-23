@@ -1,4 +1,23 @@
-<main>
-  <h1>VOY</h1>
-  <p>voy_web — frontend Angular</p>
-</main>
+<app-alert />
+
+@if (showShell()) {
+  <div class="flex min-h-screen flex-col bg-emerald-50 text-emerald-950 md:flex-row">
+    <app-sidebar />
+
+    <div class="flex min-w-0 flex-1 flex-col">
+      <main class="page-enter mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 md:py-8">
+        <router-outlet />
+      </main>
+
+      <footer class="border-t border-emerald-100 py-3 text-center text-xs text-emerald-600">
+        voy_web · Angular + Tailwind Emerald · v1.0.0
+      </footer>
+    </div>
+  </div>
+} @else {
+  <div
+    class="page-enter min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100 text-emerald-950"
+  >
+    <router-outlet />
+  </div>
+}

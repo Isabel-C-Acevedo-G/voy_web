@@ -1,1 +1,61 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, sans-serif;
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, sans-serif;
+
+  --color-brand: var(--color-emerald-500);
+  --color-brand-hover: var(--color-emerald-600);
+  --color-brand-ink: var(--color-emerald-950);
+  --color-brand-soft: var(--color-emerald-50);
+  --color-brand-pill: var(--color-emerald-100);
+
+  --radius-card: 1rem;
+
+  --animate-fade-in: fade-in 180ms ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-emerald-50);
+  color: var(--color-emerald-950);
+}
+
+.page-enter {
+  animation: page-enter 200ms ease-out;
+}
+
+.animate-fade-in {
+  animation: var(--animate-fade-in);
+}
+
+/* Hover suave en cards de datos */
+article,
+li.rounded-\[var\(--radius-card\)\] {
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
