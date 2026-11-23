@@ -11,6 +11,7 @@ import { TipoDocumento } from '../../../core/models/usuario.model';
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.css',
+  host: { class: 'block w-full min-h-screen' },
 })
 export class Register {
   private readonly auth = inject(AuthService);

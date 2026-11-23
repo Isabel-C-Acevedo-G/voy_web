@@ -1,1 +1,5 @@
-/* Estilos vía Tailwind en la plantilla */
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
