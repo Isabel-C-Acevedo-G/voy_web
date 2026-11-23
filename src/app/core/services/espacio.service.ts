@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { Espacio, EstadoEspacio } from '../models/espacio.model';
+import { Espacio, EspacioCreate, EspacioUpdate, EstadoEspacio } from '../models/espacio.model';
 
 @Injectable({ providedIn: 'root' })
 export class EspacioService {
@@ -19,5 +19,13 @@ export class EspacioService {
       params = params.set('activo', filters.activo);
     }
     return this.http.get<Espacio[]>(this.baseUrl, { params });
+  }
+
+  create(data: EspacioCreate): Observable<Espacio> {
+    return this.http.post<Espacio>(this.baseUrl, data);
+  }
+
+  update(id: number, data: EspacioUpdate): Observable<Espacio> {
+    return this.http.patch<Espacio>(`${this.baseUrl}/${id}`, data);
   }
 }
