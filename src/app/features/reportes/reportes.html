@@ -100,7 +100,7 @@
         <p class="mt-2 text-sm text-emerald-700">Sin datos en el rango.</p>
       } @else {
         <ul class="mt-4 space-y-3">
-          @for (u of f.usuarios; track u.idUsuario) {
+          @for (u of frecuentesPage(); track u.idUsuario) {
             <li>
               <div class="mb-1 flex justify-between text-sm">
                 <span class="font-medium text-emerald-900">{{ u.nombre }}</span>
@@ -115,6 +115,12 @@
             </li>
           }
         </ul>
+        <app-pagination
+          [total]="f.usuarios.length"
+          [pageSize]="pageSize"
+          [page]="page()"
+          (pageChange)="page.set($event)"
+        />
       }
     </article>
   }

@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Ingreso } from '../../core/models/ingreso.model';
@@ -8,10 +8,11 @@ import { Salida } from '../../core/models/salida.model';
 import { AuthService } from '../../core/services/auth.service';
 import { IngresoService } from '../../core/services/ingreso.service';
 import { SalidaService } from '../../core/services/salida.service';
+import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
 
 @Component({
   selector: 'app-salidas',
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, Pagination],
   templateUrl: './salidas.html',
   styleUrl: './salidas.css',
 })
@@ -22,6 +23,9 @@ export class Salidas implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   readonly items = signal<Salida[]>([]);
+  readonly page = signal(1);
+  readonly pageSize = DEFAULT_PAGE_SIZE;
+  readonly pageItems = computed(() => pageSlice(this.items(), this.page(), this.pageSize));
   readonly activos = signal<Ingreso[]>([]);
   readonly loading = signal(true);
   readonly saving = signal(false);
@@ -46,6 +50,7 @@ export class Salidas implements OnInit {
     this.salidasApi.list().subscribe({
       next: (list) => {
         this.items.set(list);
+        this.page.set(1);
         this.loading.set(false);
       },
       error: (err: HttpErrorResponse) => {

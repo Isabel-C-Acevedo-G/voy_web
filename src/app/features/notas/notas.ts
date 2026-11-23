@@ -6,10 +6,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Nota, TipoMovimiento } from '../../core/models/nota.model';
 import { AuthService } from '../../core/services/auth.service';
 import { NotaService } from '../../core/services/nota.service';
+import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
 
 @Component({
   selector: 'app-notas',
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, Pagination],
   templateUrl: './notas.html',
   styleUrl: './notas.css',
 })
@@ -19,6 +20,9 @@ export class Notas implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   readonly items = signal<Nota[]>([]);
+  readonly page = signal(1);
+  readonly pageSize = DEFAULT_PAGE_SIZE;
+  readonly pageItems = computed(() => pageSlice(this.items(), this.page(), this.pageSize));
   readonly loading = signal(true);
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
@@ -51,6 +55,7 @@ export class Notas implements OnInit {
       .subscribe({
         next: (list) => {
           this.items.set(list);
+          this.page.set(1);
           this.loading.set(false);
         },
         error: (err: HttpErrorResponse) => {

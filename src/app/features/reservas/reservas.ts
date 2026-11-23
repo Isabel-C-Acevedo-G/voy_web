@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Espacio } from '../../core/models/espacio.model';
@@ -8,10 +8,11 @@ import { Reserva } from '../../core/models/reserva.model';
 import { AuthService } from '../../core/services/auth.service';
 import { EspacioService } from '../../core/services/espacio.service';
 import { ReservaService } from '../../core/services/reserva.service';
+import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
 
 @Component({
   selector: 'app-reservas',
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, Pagination],
   templateUrl: './reservas.html',
   styleUrl: './reservas.css',
 })
@@ -22,6 +23,9 @@ export class Reservas implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   readonly items = signal<Reserva[]>([]);
+  readonly page = signal(1);
+  readonly pageSize = DEFAULT_PAGE_SIZE;
+  readonly pageItems = computed(() => pageSlice(this.items(), this.page(), this.pageSize));
   readonly libres = signal<Espacio[]>([]);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
@@ -46,6 +50,7 @@ export class Reservas implements OnInit {
       this.reservasApi.list({ idUsuario }).subscribe({
         next: (list) => {
           this.items.set(list);
+          this.page.set(1);
           this.loading.set(false);
         },
         error: (err: HttpErrorResponse) => {

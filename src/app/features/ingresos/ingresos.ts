@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Bicicleta } from '../../core/models/bicicleta.model';
@@ -8,10 +8,11 @@ import { Ingreso } from '../../core/models/ingreso.model';
 import { AuthService } from '../../core/services/auth.service';
 import { BicicletaService } from '../../core/services/bicicleta.service';
 import { IngresoService } from '../../core/services/ingreso.service';
+import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
 
 @Component({
   selector: 'app-ingresos',
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, Pagination],
   templateUrl: './ingresos.html',
   styleUrl: './ingresos.css',
 })
@@ -22,6 +23,9 @@ export class Ingresos implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   readonly items = signal<Ingreso[]>([]);
+  readonly page = signal(1);
+  readonly pageSize = DEFAULT_PAGE_SIZE;
+  readonly pageItems = computed(() => pageSlice(this.items(), this.page(), this.pageSize));
   readonly bicicletas = signal<Bicicleta[]>([]);
   readonly loading = signal(true);
   readonly saving = signal(false);
@@ -48,6 +52,7 @@ export class Ingresos implements OnInit {
     this.ingresosApi.list().subscribe({
       next: (list) => {
         this.items.set(list);
+        this.page.set(1);
         this.loading.set(false);
       },
       error: (err: HttpErrorResponse) => {

@@ -6,10 +6,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Bicicleta, TipoBicicleta } from '../../core/models/bicicleta.model';
 import { AuthService } from '../../core/services/auth.service';
 import { BicicletaService } from '../../core/services/bicicleta.service';
+import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
 
 @Component({
   selector: 'app-bicicletas',
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, Pagination],
   templateUrl: './bicicletas.html',
   styleUrl: './bicicletas.css',
 })
@@ -19,6 +20,9 @@ export class Bicicletas implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   readonly items = signal<Bicicleta[]>([]);
+  readonly page = signal(1);
+  readonly pageSize = DEFAULT_PAGE_SIZE;
+  readonly pageItems = computed(() => pageSlice(this.items(), this.page(), this.pageSize));
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly editingId = signal<number | null>(null);
@@ -47,6 +51,7 @@ export class Bicicletas implements OnInit {
       this.bicicletasApi.list(idPropietario != null ? { idPropietario } : undefined).subscribe({
         next: (list) => {
           this.items.set(list);
+          this.page.set(1);
           this.loading.set(false);
         },
         error: (err: HttpErrorResponse) => {
