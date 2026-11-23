@@ -6,12 +6,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Incidente, TipoIncidente } from '../../core/models/incidente.model';
 import { AuthService } from '../../core/services/auth.service';
 import { IncidenteService } from '../../core/services/incidente.service';
+import { FormListPage } from '../../shared/form-list-page/form-list-page';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
-import { ListPage } from '../../shared/list-page/list-page';
 
 @Component({
   selector: 'app-incidentes',
-  imports: [ReactiveFormsModule, DatePipe, Pagination, ListPage],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, FormListPage],
   templateUrl: './incidentes.html',
   styleUrl: './incidentes.css',
   host: { class: 'block h-full min-h-0' },

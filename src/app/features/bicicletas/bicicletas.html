@@ -1,5 +1,5 @@
-<app-list-page>
-  <div listHeader class="space-y-4">
+<app-form-list-page>
+  <div pageTitle>
     <header class="flex flex-wrap items-end justify-between gap-3">
       <div>
         <h1 class="text-3xl font-extrabold text-emerald-950">
@@ -21,17 +21,19 @@
         Nueva bicicleta
       </button>
     </header>
+  </div>
 
+  <div pageForm class="space-y-4">
     @if (error(); as err) {
       <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
     }
 
     <form
-      class="grid gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm sm:grid-cols-2"
+      class="grid gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm"
       [formGroup]="form"
       (ngSubmit)="submit()"
     >
-      <h2 class="sm:col-span-2 text-lg font-semibold text-emerald-900">
+      <h2 class="text-lg font-semibold text-emerald-900">
         {{ editingId() == null ? 'Registrar' : 'Editar #' + editingId() }}
       </h2>
 
@@ -56,7 +58,7 @@
           }
         </select>
       </label>
-      <label class="block space-y-1 sm:col-span-2">
+      <label class="block space-y-1">
         <span class="text-sm font-medium text-emerald-800">Número de serie</span>
         <input
           formControlName="numeroSerie"
@@ -64,10 +66,10 @@
         />
       </label>
 
-      <div class="flex gap-2 sm:col-span-2">
+      <div class="flex flex-wrap gap-2">
         <button
           type="submit"
-          class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+          class="flex-1 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
           [disabled]="saving()"
         >
           {{ saving() ? 'Guardando…' : 'Guardar' }}
@@ -85,15 +87,15 @@
     </form>
   </div>
 
-  <div listBody>
+  <div pageList>
     @if (loading()) {
       <p class="text-emerald-700">Cargando…</p>
     } @else if (items().length === 0) {
       <p class="rounded-xl border border-dashed border-emerald-200 bg-white p-6 text-emerald-700">
-        Aún no tienes bicicletas. Registra la primera arriba.
+        Aún no tienes bicicletas. Registra la primera a la izquierda.
       </p>
     } @else {
-      <ul class="grid gap-4 pb-2 sm:grid-cols-2">
+      <ul class="grid gap-4 pb-2">
         @for (b of pageItems(); track b.idBicicleta) {
           <li
             class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm"
@@ -147,7 +149,7 @@
     }
   </div>
 
-  <div listFooter>
+  <div pagePager>
     <app-pagination
       [total]="items().length"
       [pageSize]="pageSize"
@@ -155,4 +157,4 @@
       (pageChange)="page.set($event)"
     />
   </div>
-</app-list-page>
+</app-form-list-page>

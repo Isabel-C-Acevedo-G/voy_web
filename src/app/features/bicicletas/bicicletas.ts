@@ -7,11 +7,11 @@ import { Bicicleta, TipoBicicleta } from '../../core/models/bicicleta.model';
 import { AuthService } from '../../core/services/auth.service';
 import { BicicletaService } from '../../core/services/bicicleta.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
-import { ListPage } from '../../shared/list-page/list-page';
+import { FormListPage } from '../../shared/form-list-page/form-list-page';
 
 @Component({
   selector: 'app-bicicletas',
-  imports: [ReactiveFormsModule, DatePipe, Pagination, ListPage],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, FormListPage],
   templateUrl: './bicicletas.html',
   styleUrl: './bicicletas.css',
   host: { class: 'block h-full min-h-0' },

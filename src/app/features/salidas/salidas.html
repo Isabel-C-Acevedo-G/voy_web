@@ -1,12 +1,14 @@
-<app-list-page>
-  <div listHeader class="space-y-4">
+<app-form-list-page>
+  <div pageTitle>
     <header>
       <h1 class="text-3xl font-extrabold text-emerald-950">Salidas</h1>
       <p class="text-emerald-700">
         Exige tres verificaciones en true (marca, color, serie) para cerrar el ingreso.
       </p>
     </header>
+  </div>
 
+  <div pageForm class="space-y-4">
     @if (error(); as err) {
       <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
     }
@@ -54,7 +56,7 @@
 
       <button
         type="submit"
-        class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+        class="w-full rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
         [disabled]="saving() || activos().length === 0"
       >
         {{ saving() ? 'Registrando…' : 'Registrar salida' }}
@@ -62,7 +64,7 @@
     </form>
   </div>
 
-  <div listBody>
+  <div pageList>
     @if (loading()) {
       <p class="text-emerald-700">Cargando…</p>
     } @else {
@@ -97,7 +99,7 @@
     }
   </div>
 
-  <div listFooter>
+  <div pagePager>
     <app-pagination
       [total]="items().length"
       [pageSize]="pageSize"
@@ -105,4 +107,4 @@
       (pageChange)="page.set($event)"
     />
   </div>
-</app-list-page>
+</app-form-list-page>

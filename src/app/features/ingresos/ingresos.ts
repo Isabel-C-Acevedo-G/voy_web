@@ -9,11 +9,11 @@ import { AuthService } from '../../core/services/auth.service';
 import { BicicletaService } from '../../core/services/bicicleta.service';
 import { IngresoService } from '../../core/services/ingreso.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
-import { ListPage } from '../../shared/list-page/list-page';
+import { FormListPage } from '../../shared/form-list-page/form-list-page';
 
 @Component({
   selector: 'app-ingresos',
-  imports: [ReactiveFormsModule, DatePipe, Pagination, ListPage],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, FormListPage],
   templateUrl: './ingresos.html',
   styleUrl: './ingresos.css',
   host: { class: 'block h-full min-h-0' },

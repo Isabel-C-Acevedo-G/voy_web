@@ -7,11 +7,11 @@ import { Nota, TipoMovimiento } from '../../core/models/nota.model';
 import { AuthService } from '../../core/services/auth.service';
 import { NotaService } from '../../core/services/nota.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
-import { ListPage } from '../../shared/list-page/list-page';
+import { FormListPage } from '../../shared/form-list-page/form-list-page';
 
 @Component({
   selector: 'app-notas',
-  imports: [ReactiveFormsModule, DatePipe, Pagination, ListPage],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, FormListPage],
   templateUrl: './notas.html',
   styleUrl: './notas.css',
   host: { class: 'block h-full min-h-0' },
