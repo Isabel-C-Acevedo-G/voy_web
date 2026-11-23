@@ -1,23 +1,19 @@
-<app-form-list-page>
-  <div pageTitle>
-    <header>
-      <h1 class="text-3xl font-extrabold text-emerald-950">Espacios</h1>
-      <p class="text-emerald-700">
-        @if (isAdmin()) {
-          CRUD de espacios (el estado lo cambian ingresos/reservas).
-        } @else {
-          Consulta de ocupación.
-        }
-      </p>
-    </header>
-  </div>
+@if (isAdmin()) {
+  <app-form-list-page>
+    <div pageTitle>
+      <header>
+        <h1 class="text-3xl font-extrabold text-emerald-950">Espacios</h1>
+        <p class="text-emerald-700">
+          Alta y edición de espacios. El estado lo actualizan ingresos y reservas.
+        </p>
+      </header>
+    </div>
 
-  <div pageForm class="space-y-4">
-    @if (error(); as err) {
-      <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
-    }
+    <div pageForm class="space-y-4">
+      @if (error(); as err) {
+        <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
+      }
 
-    @if (isAdmin()) {
       <form
         class="flex flex-col gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm"
         [formGroup]="form"
@@ -54,44 +50,38 @@
           }
         </div>
       </form>
-    } @else {
-      <p class="rounded-xl border border-dashed border-emerald-200 bg-white p-4 text-sm text-emerald-700">
-        Solo consulta: el alta de espacios es para administradores.
-      </p>
-    }
-  </div>
+    </div>
 
-  <div pageList>
-    @if (loading()) {
-      <p class="text-emerald-700">Cargando…</p>
-    } @else {
-      <ul class="grid gap-3 pb-2 sm:grid-cols-2">
-        @for (e of pageItems(); track e.idEspacio) {
-          <li
-            class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
-          >
-            <div class="flex items-start justify-between gap-2">
-              <div>
-                <p class="font-bold text-emerald-950">{{ e.codigo }}</p>
-                <p class="text-xs text-emerald-600">#{{ e.idEspacio }}</p>
+    <div pageList>
+      @if (loading()) {
+        <p class="text-emerald-700">Cargando…</p>
+      } @else {
+        <ul class="grid gap-3 pb-2 sm:grid-cols-2">
+          @for (e of pageItems(); track e.idEspacio) {
+            <li
+              class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
+            >
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <p class="font-bold text-emerald-950">{{ e.codigo }}</p>
+                  <p class="text-xs text-emerald-600">#{{ e.idEspacio }}</p>
+                </div>
+                <span
+                  class="rounded-full px-2.5 py-0.5 text-xs font-medium"
+                  [class]="
+                    e.estado === 'libre'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : e.estado === 'reservado'
+                        ? 'bg-amber-100 text-amber-800'
+                        : 'bg-slate-100 text-slate-700'
+                  "
+                >
+                  {{ e.estado }}
+                </span>
               </div>
-              <span
-                class="rounded-full px-2.5 py-0.5 text-xs font-medium"
-                [class]="
-                  e.estado === 'libre'
-                    ? 'bg-emerald-100 text-emerald-800'
-                    : e.estado === 'reservado'
-                      ? 'bg-amber-100 text-amber-800'
-                      : 'bg-slate-100 text-slate-700'
-                "
-              >
-                {{ e.estado }}
-              </span>
-            </div>
-            <p class="mt-2 text-xs text-emerald-600">
-              {{ e.activo ? 'activo' : 'inactivo' }} · {{ e.creadoEn | date: 'shortDate' }}
-            </p>
-            @if (isAdmin()) {
+              <p class="mt-2 text-xs text-emerald-600">
+                {{ e.activo ? 'activo' : 'inactivo' }} · {{ e.creadoEn | date: 'shortDate' }}
+              </p>
               <button
                 type="button"
                 class="mt-3 rounded-xl border border-emerald-200 px-3 py-1 text-sm text-emerald-800 hover:bg-emerald-50"
@@ -99,19 +89,76 @@
               >
                 Editar
               </button>
-            }
-          </li>
-        }
-      </ul>
-    }
-  </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
 
-  <div pagePager>
-    <app-pagination
-      [total]="items().length"
-      [pageSize]="pageSize"
-      [page]="page()"
-      (pageChange)="page.set($event)"
-    />
-  </div>
-</app-form-list-page>
+    <div pagePager>
+      <app-pagination
+        [total]="items().length"
+        [pageSize]="pageSize"
+        [page]="page()"
+        (pageChange)="page.set($event)"
+      />
+    </div>
+  </app-form-list-page>
+} @else {
+  <app-list-page>
+    <div listHeader>
+      <header>
+        <h1 class="text-3xl font-extrabold text-emerald-950">Espacios</h1>
+        <p class="text-emerald-700">Consulta de ocupación.</p>
+      </header>
+      @if (error(); as err) {
+        <div class="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
+      }
+    </div>
+
+    <div listBody>
+      @if (loading()) {
+        <p class="text-emerald-700">Cargando…</p>
+      } @else {
+        <ul class="grid gap-3 pb-2 sm:grid-cols-2 lg:grid-cols-3">
+          @for (e of pageItems(); track e.idEspacio) {
+            <li
+              class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
+            >
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <p class="font-bold text-emerald-950">{{ e.codigo }}</p>
+                  <p class="text-xs text-emerald-600">#{{ e.idEspacio }}</p>
+                </div>
+                <span
+                  class="rounded-full px-2.5 py-0.5 text-xs font-medium"
+                  [class]="
+                    e.estado === 'libre'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : e.estado === 'reservado'
+                        ? 'bg-amber-100 text-amber-800'
+                        : 'bg-slate-100 text-slate-700'
+                  "
+                >
+                  {{ e.estado }}
+                </span>
+              </div>
+              <p class="mt-2 text-xs text-emerald-600">
+                {{ e.activo ? 'activo' : 'inactivo' }} · {{ e.creadoEn | date: 'shortDate' }}
+              </p>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div listFooter>
+      <app-pagination
+        [total]="items().length"
+        [pageSize]="pageSize"
+        [page]="page()"
+        (pageChange)="page.set($event)"
+      />
+    </div>
+  </app-list-page>
+}

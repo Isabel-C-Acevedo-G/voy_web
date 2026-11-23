@@ -2,12 +2,7 @@
   <div pageTitle>
     <header>
       <h1 class="text-3xl font-extrabold text-emerald-950">Notas</h1>
-      <p class="text-emerald-700">
-        Aclaran ingresos/salidas sin borrarlos.
-        @if (!isAdmin()) {
-          Solo lectura para vigilante.
-        }
-      </p>
+      <p class="text-emerald-700">Aclaran ingresos y salidas sin borrarlos.</p>
     </header>
   </div>
 
@@ -115,7 +110,7 @@
               <span class="text-xs text-emerald-600">{{ n.fecha | date: 'short' }}</span>
             </div>
             <p class="mt-2 text-emerald-900">{{ n.texto }}</p>
-            <p class="mt-1 text-xs text-emerald-600">Admin #{{ n.idAdministrador }}</p>
+            <p class="mt-1 text-xs text-emerald-600">Autor #{{ n.idAdministrador }}</p>
           </li>
         }
       </ul>

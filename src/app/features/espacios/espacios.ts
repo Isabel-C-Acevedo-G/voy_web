@@ -8,10 +8,11 @@ import { AuthService } from '../../core/services/auth.service';
 import { EspacioService } from '../../core/services/espacio.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
 import { FormListPage } from '../../shared/form-list-page/form-list-page';
+import { ListPage } from '../../shared/list-page/list-page';
 
 @Component({
   selector: 'app-espacios',
-  imports: [ReactiveFormsModule, DatePipe, Pagination, FormListPage],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, FormListPage, ListPage],
   templateUrl: './espacios.html',
   styleUrl: './espacios.css',
   host: { class: 'block h-full min-h-0' },
