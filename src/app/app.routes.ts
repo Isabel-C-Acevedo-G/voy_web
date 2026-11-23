@@ -30,11 +30,24 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/home/home').then((m) => m.Home),
   },
-  { path: 'bicicletas', title: 'Bicicletas · VOY', ...soon('Bicicletas') },
+  {
+    path: 'bicicletas',
+    title: 'Bicicletas · VOY',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/bicicletas/bicicletas').then((m) => m.Bicicletas),
+  },
   {
     path: 'reservas',
     title: 'Reservas · VOY',
-    ...soon('Reservas', ['ciclista', 'administrador']),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ciclista', 'administrador'] },
+    loadComponent: () => import('./features/reservas/reservas').then((m) => m.Reservas),
+  },
+  {
+    path: 'perfil',
+    title: 'Perfil · VOY',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/perfil/perfil').then((m) => m.Perfil),
   },
   { path: 'espacios', title: 'Espacios · VOY', ...soon('Espacios') },
   {
