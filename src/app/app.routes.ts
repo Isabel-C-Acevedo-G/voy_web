@@ -4,13 +4,6 @@ import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { roleGuard } from './core/guards/role.guard';
 
-const soon = (title: string, roles?: string[]) => ({
-  loadComponent: () =>
-    import('./shared/coming-soon/coming-soon').then((m) => m.ComingSoon),
-  data: roles?.length ? { title, roles } : { title },
-  canActivate: roles?.length ? [authGuard, roleGuard] : [authGuard],
-});
-
 export const routes: Routes = [
   {
     path: 'login',
@@ -49,7 +42,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/perfil/perfil').then((m) => m.Perfil),
   },
-  { path: 'espacios', title: 'Espacios · VOY', ...soon('Espacios') },
+  {
+    path: 'espacios',
+    title: 'Espacios · VOY',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/espacios/espacios').then((m) => m.Espacios),
+  },
   {
     path: 'ingresos',
     title: 'Ingresos · VOY',
@@ -81,12 +79,16 @@ export const routes: Routes = [
   {
     path: 'usuarios',
     title: 'Usuarios · VOY',
-    ...soon('Usuarios', ['administrador']),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () => import('./features/usuarios/usuarios').then((m) => m.Usuarios),
   },
   {
     path: 'reportes',
     title: 'Reportes · VOY',
-    ...soon('Reportes', ['administrador']),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['administrador'] },
+    loadComponent: () => import('./features/reportes/reportes').then((m) => m.Reportes),
   },
   {
     path: 'forbidden',
