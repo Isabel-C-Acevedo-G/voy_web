@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
 import { AuthService } from '../services/auth.service';
 
 function detailMessage(err: HttpErrorResponse): string {
@@ -14,6 +15,13 @@ function detailMessage(err: HttpErrorResponse): string {
     return detail.map((item: { msg?: string }) => item.msg ?? '').filter(Boolean).join(' · ');
   }
   return err.message || 'Error de red';
+}
+
+function isAuthPublic(url: string): boolean {
+  return (
+    url.startsWith(`${environment.apiUrl}/auth/login`) ||
+    url.startsWith(`${environment.apiUrl}/auth/register`)
+  );
 }
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -28,7 +36,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       const message = detailMessage(err);
 
-      if (err.status === 401) {
+      if (err.status === 401 && !isAuthPublic(req.url)) {
         auth.logout('Sesión expirada o no autenticado');
         return throwError(() => err);
       }
@@ -36,7 +44,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (err.status === 403) {
         if (message.toLowerCase().includes('inactivo')) {
           auth.logout('Usuario inactivo');
-        } else {
+        } else if (!isAuthPublic(req.url)) {
           auth.setFlash(message || 'No tienes permiso para esta operación');
           void router.navigate(['/forbidden']);
         }

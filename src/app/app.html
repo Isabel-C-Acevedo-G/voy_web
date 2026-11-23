@@ -1,13 +1,19 @@
-<div class="flex min-h-screen bg-emerald-50 text-emerald-950">
-  <app-sidebar />
+@if (showShell()) {
+  <div class="flex min-h-screen bg-emerald-50 text-emerald-950">
+    <app-sidebar />
 
-  <div class="flex min-w-0 flex-1 flex-col">
-    <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6">
-      <router-outlet />
-    </main>
+    <div class="flex min-w-0 flex-1 flex-col">
+      <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6">
+        <router-outlet />
+      </main>
 
-    <footer class="border-t border-emerald-100 py-3 text-center text-xs text-emerald-600">
-      voy_web · Angular + Tailwind Emerald
-    </footer>
+      <footer class="border-t border-emerald-100 py-3 text-center text-xs text-emerald-600">
+        voy_web · Angular + Tailwind Emerald
+      </footer>
+    </div>
   </div>
-</div>
+} @else {
+  <div class="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100 text-emerald-950">
+    <router-outlet />
+  </div>
+}

@@ -10,16 +10,24 @@
       </span>
       <span class="text-sm font-semibold text-emerald-900">Parqueaderos</span>
     </a>
+    @if (rol(); as r) {
+      <p class="mt-2">
+        <span
+          class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800"
+          >{{ r }}</span
+        >
+      </p>
+    }
   </div>
 
-  <nav class="flex-1 px-3 py-4">
+  <nav class="flex-1 overflow-y-auto px-3 py-4">
     <ul class="space-y-1">
-      @for (link of links; track link.path) {
+      @for (link of links(); track link.path) {
         <li>
           <a
             [routerLink]="link.path"
             routerLinkActive="bg-emerald-100 text-emerald-800"
-            [routerLinkActiveOptions]="{ exact: true }"
+            [routerLinkActiveOptions]="{ exact: link.path === '/' }"
             class="block rounded-xl px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50"
           >
             {{ link.label }}
@@ -29,5 +37,17 @@
     </ul>
   </nav>
 
-  <p class="px-4 py-3 text-xs text-emerald-600">Fase 1 · shell Emerald</p>
+  <div class="border-t border-emerald-100 px-4 py-3">
+    @if (user(); as u) {
+      <p class="truncate text-xs font-medium text-emerald-900">{{ u.nombre }}</p>
+      <p class="truncate text-xs text-emerald-600">{{ u.correo }}</p>
+    }
+    <button
+      type="button"
+      class="mt-2 w-full rounded-xl border border-emerald-200 px-3 py-1.5 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
+      (click)="logout()"
+    >
+      Cerrar sesión
+    </button>
+  </div>
 </aside>
