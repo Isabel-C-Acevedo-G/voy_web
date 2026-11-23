@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Bicicleta, TipoBicicleta } from '../../core/models/bicicleta.model';
@@ -23,6 +23,7 @@ export class Bicicletas implements OnInit {
   readonly error = signal<string | null>(null);
   readonly editingId = signal<number | null>(null);
   readonly saving = signal(false);
+  readonly isAdmin = computed(() => this.auth.rol() === 'administrador');
 
   readonly tipos: TipoBicicleta[] = ['urbana', 'montaña', 'ruta', 'eléctrica', 'otra'];
 
@@ -39,23 +40,11 @@ export class Bicicletas implements OnInit {
   }
 
   reload(): void {
-    const user = this.auth.user();
     this.loading.set(true);
     this.error.set(null);
 
-    const ensureUser = user
-      ? (cb: (id: number) => void) => cb(user.idUsuario)
-      : (cb: (id: number) => void) =>
-          this.auth.me().subscribe({
-            next: (u) => cb(u.idUsuario),
-            error: () => {
-              this.loading.set(false);
-              this.error.set('No se pudo cargar el usuario');
-            },
-          });
-
-    ensureUser((idPropietario) => {
-      this.bicicletasApi.list({ idPropietario }).subscribe({
+    const loadList = (idPropietario?: number) => {
+      this.bicicletasApi.list(idPropietario != null ? { idPropietario } : undefined).subscribe({
         next: (list) => {
           this.items.set(list);
           this.loading.set(false);
@@ -65,6 +54,36 @@ export class Bicicletas implements OnInit {
           this.error.set(this.errMsg(err));
         },
       });
+    };
+
+    if (this.isAdmin()) {
+      loadList();
+      return;
+    }
+
+    const user = this.auth.user();
+    if (user) {
+      loadList(user.idUsuario);
+      return;
+    }
+
+    this.auth.me().subscribe({
+      next: (u) => loadList(u.idUsuario),
+      error: () => {
+        this.loading.set(false);
+        this.error.set('No se pudo cargar el usuario');
+      },
+    });
+  }
+
+  toggleEstado(b: Bicicleta): void {
+    if (!this.isAdmin()) {
+      return;
+    }
+    const next = b.estado === 'activa' ? 'inactiva' : 'activa';
+    this.bicicletasApi.updateEstado(b.idBicicleta, next).subscribe({
+      next: () => this.reload(),
+      error: (err: HttpErrorResponse) => this.error.set(this.errMsg(err)),
     });
   }
 

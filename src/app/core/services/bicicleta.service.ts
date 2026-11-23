@@ -44,4 +44,8 @@ export class BicicletaService {
   update(id: number, data: BicicletaUpdate): Observable<Bicicleta> {
     return this.http.patch<Bicicleta>(`${this.baseUrl}/${id}`, data);
   }
+
+  updateEstado(id: number, estado: EstadoBicicleta): Observable<Bicicleta> {
+    return this.http.patch<Bicicleta>(`${this.baseUrl}/${id}/estado`, { estado });
+  }
 }
