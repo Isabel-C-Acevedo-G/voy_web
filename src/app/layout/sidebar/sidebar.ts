@@ -26,6 +26,7 @@ export class Sidebar {
     { path: '/', label: 'Inicio' },
     { path: '/bicicletas', label: 'Bicicletas' },
     { path: '/reservas', label: 'Reservas', roles: ['ciclista', 'administrador'] },
+    { path: '/perfil', label: 'Mi perfil' },
     { path: '/espacios', label: 'Espacios' },
     { path: '/ingresos', label: 'Ingresos', roles: ['administrador', 'vigilante'] },
     { path: '/salidas', label: 'Salidas', roles: ['administrador', 'vigilante'] },
