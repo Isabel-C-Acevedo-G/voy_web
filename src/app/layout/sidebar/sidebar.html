@@ -1,0 +1,33 @@
+<aside
+  class="flex w-56 shrink-0 flex-col border-r border-emerald-100 bg-gradient-to-b from-emerald-50 to-white"
+>
+  <div class="border-b border-emerald-100 px-4 py-5">
+    <a routerLink="/" class="flex items-center gap-2">
+      <span
+        class="rounded-lg bg-emerald-500 px-2 py-1 text-sm font-extrabold tracking-wide text-white"
+      >
+        VOY
+      </span>
+      <span class="text-sm font-semibold text-emerald-900">Parqueaderos</span>
+    </a>
+  </div>
+
+  <nav class="flex-1 px-3 py-4">
+    <ul class="space-y-1">
+      @for (link of links; track link.path) {
+        <li>
+          <a
+            [routerLink]="link.path"
+            routerLinkActive="bg-emerald-100 text-emerald-800"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="block rounded-xl px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50"
+          >
+            {{ link.label }}
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <p class="px-4 py-3 text-xs text-emerald-600">Fase 1 · shell Emerald</p>
+</aside>
