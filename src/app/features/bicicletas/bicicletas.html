@@ -1,8 +1,16 @@
 <section class="space-y-6">
   <header class="flex flex-wrap items-end justify-between gap-3">
     <div>
-      <h1 class="text-3xl font-extrabold text-emerald-950">Mis bicicletas</h1>
-      <p class="text-emerald-700">Alta y edición de tus bicicletas registradas.</p>
+      <h1 class="text-3xl font-extrabold text-emerald-950">
+        {{ isAdmin() ? 'Bicicletas' : 'Mis bicicletas' }}
+      </h1>
+      <p class="text-emerald-700">
+        @if (isAdmin()) {
+          Listado general y cambio de estado (activa / inactiva).
+        } @else {
+          Alta y edición de tus bicicletas registradas.
+        }
+      </p>
     </div>
     <button
       type="button"
@@ -105,17 +113,31 @@
           </div>
           <p class="mt-3 text-sm text-emerald-800">
             Serie: <code class="font-medium">{{ b.numeroSerie }}</code>
+            @if (isAdmin()) {
+              · propietario #{{ b.idPropietario }}
+            }
           </p>
           <p class="mt-1 text-xs text-emerald-600">
             Alta {{ b.creadoEn | date: 'short' }}
           </p>
-          <button
-            type="button"
-            class="mt-4 rounded-xl border border-emerald-200 px-3 py-1.5 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
-            (click)="startEdit(b)"
-          >
-            Editar
-          </button>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              class="rounded-xl border border-emerald-200 px-3 py-1.5 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
+              (click)="startEdit(b)"
+            >
+              Editar
+            </button>
+            @if (isAdmin()) {
+              <button
+                type="button"
+                class="rounded-xl bg-emerald-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-600"
+                (click)="toggleEstado(b)"
+              >
+                {{ b.estado === 'activa' ? 'Desactivar' : 'Activar' }}
+              </button>
+            }
+          </div>
         </li>
       }
     </ul>

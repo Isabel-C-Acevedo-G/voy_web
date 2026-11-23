@@ -2,12 +2,58 @@
   <header>
     <h1 class="text-3xl font-extrabold text-emerald-950">Notas</h1>
     <p class="text-emerald-700">
-      Solo lectura para vigilante. El alta la hace el administrador (Fase 5).
+      Aclaran ingresos/salidas sin borrarlos.
+      @if (!isAdmin()) {
+        Solo lectura para vigilante.
+      }
     </p>
   </header>
 
   @if (error(); as err) {
     <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
+  }
+
+  @if (isAdmin()) {
+    <form
+      class="grid gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm sm:grid-cols-2"
+      [formGroup]="createForm"
+      (ngSubmit)="submitCreate()"
+    >
+      <h2 class="sm:col-span-2 text-lg font-semibold text-emerald-900">Nueva nota</h2>
+      <label class="block space-y-1">
+        <span class="text-sm font-medium text-emerald-800">Tipo movimiento</span>
+        <select
+          formControlName="tipoMovimiento"
+          class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+        >
+          <option value="ingreso">ingreso</option>
+          <option value="salida">salida</option>
+        </select>
+      </label>
+      <label class="block space-y-1">
+        <span class="text-sm font-medium text-emerald-800">idMovimiento</span>
+        <input
+          type="number"
+          formControlName="idMovimiento"
+          class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+        />
+      </label>
+      <label class="block space-y-1 sm:col-span-2">
+        <span class="text-sm font-medium text-emerald-800">Texto</span>
+        <textarea
+          formControlName="texto"
+          rows="2"
+          class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+        ></textarea>
+      </label>
+      <button
+        type="submit"
+        class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+        [disabled]="saving()"
+      >
+        {{ saving() ? 'Guardando…' : 'Crear nota' }}
+      </button>
+    </form>
   }
 
   <form
