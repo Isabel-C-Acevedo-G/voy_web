@@ -1,5 +1,5 @@
-<section class="space-y-6 pb-4">
-  <header class="space-y-1">
+<section class="flex h-full min-h-0 flex-col">
+  <header class="shrink-0 space-y-1 pb-3">
     <h1 class="text-3xl font-extrabold text-emerald-950">
       @if (user(); as u) {
         Hola, {{ firstName(u) }}
@@ -15,85 +15,97 @@
     </p>
   </header>
 
-  <article
-    class="rounded-[var(--radius-card)] bg-gradient-to-br from-emerald-400 to-emerald-600 p-6 text-white shadow-sm"
-  >
-    <h2 class="text-xl font-bold">Parqueadero VOY</h2>
-    <p class="mt-1 text-sm text-emerald-50">
-      Resumen del día: ocupación, operación y próximos pasos según tu rol.
-    </p>
-  </article>
+  <div class="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain pb-4 pr-1">
+    <article
+      class="rounded-[var(--radius-card)] bg-gradient-to-br from-emerald-400 to-emerald-600 p-6 text-white shadow-sm"
+    >
+      <h2 class="text-xl font-bold">Parqueadero VOY</h2>
+      <p class="mt-1 text-sm text-emerald-50">
+        Resumen del día: ocupación, operación y próximos pasos según tu rol.
+      </p>
+    </article>
 
-  @if (loading()) {
-    <app-loading label="Cargando indicadores…" />
-  } @else {
-    <section>
-      <h2 class="mb-3 text-lg font-semibold text-emerald-950">Indicadores</h2>
-      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <article class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm">
-          <p class="text-sm text-emerald-600">Espacios libres</p>
-          <p class="mt-1 text-3xl font-extrabold text-emerald-600">{{ kpis().libres }}</p>
-        </article>
-        <article class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm">
-          <p class="text-sm text-emerald-600">Ocupados</p>
-          <p class="mt-1 text-3xl font-extrabold text-emerald-950">{{ kpis().ocupados }}</p>
-        </article>
-        <article class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm">
-          <p class="text-sm text-emerald-600">Reservados</p>
-          <p class="mt-1 text-3xl font-extrabold text-amber-700">{{ kpis().reservados }}</p>
-        </article>
-
-        @if (showReservas()) {
+    @if (loading()) {
+      <app-loading label="Cargando indicadores…" />
+    } @else {
+      <section>
+        <h2 class="mb-3 text-lg font-semibold text-emerald-950">Indicadores</h2>
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <article
             class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
           >
-            <p class="text-sm text-emerald-600">
-              {{ isCiclista() ? 'Tus reservas activas' : 'Reservas activas' }}
-            </p>
-            <p class="mt-1 text-3xl font-extrabold text-emerald-950">{{ kpis().reservasActivas }}</p>
-          </article>
-        }
-
-        @if (showOperacion()) {
-          <article
-            class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
-          >
-            <p class="text-sm text-emerald-600">Ingresos activos</p>
-            <p class="mt-1 text-3xl font-extrabold text-emerald-950">{{ kpis().ingresosActivos }}</p>
+            <p class="text-sm text-emerald-600">Espacios libres</p>
+            <p class="mt-1 text-3xl font-extrabold text-emerald-600">{{ kpis().libres }}</p>
           </article>
           <article
             class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
           >
-            <p class="text-sm text-emerald-600">Incidentes abiertos</p>
-            <p class="mt-1 text-3xl font-extrabold text-amber-800">
-              {{ kpis().incidentesAbiertos }}
-            </p>
+            <p class="text-sm text-emerald-600">Ocupados</p>
+            <p class="mt-1 text-3xl font-extrabold text-emerald-950">{{ kpis().ocupados }}</p>
           </article>
-        }
-      </div>
-    </section>
-
-    <section>
-      <h2 class="mb-3 text-lg font-semibold text-emerald-950">Empieza por aquí</h2>
-      <ol class="grid gap-3 sm:grid-cols-2">
-        @for (step of steps(); track step.path; let idx = $index) {
-          <li
-            class="flex flex-col rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
+          <article
+            class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
           >
-            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-500">
-              Paso {{ idx + 1 }}
-            </p>
-            <h3 class="mt-1 font-bold text-emerald-950">{{ step.title }}</h3>
-            <p class="mt-1 flex-1 text-sm text-emerald-700">{{ step.detail }}</p>
-            <a
-              [routerLink]="step.path"
-              class="mt-4 inline-flex w-fit rounded-xl bg-emerald-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-600"
+            <p class="text-sm text-emerald-600">Reservados</p>
+            <p class="mt-1 text-3xl font-extrabold text-amber-700">{{ kpis().reservados }}</p>
+          </article>
+
+          @if (showReservas()) {
+            <article
+              class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
             >
-              {{ step.cta }}
-            </a>
-          </li>
-        }
-      </ol>
-    </section>
-  }
+              <p class="text-sm text-emerald-600">
+                {{ isCiclista() ? 'Tus reservas activas' : 'Reservas activas' }}
+              </p>
+              <p class="mt-1 text-3xl font-extrabold text-emerald-950">
+                {{ kpis().reservasActivas }}
+              </p>
+            </article>
+          }
+
+          @if (showOperacion()) {
+            <article
+              class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
+            >
+              <p class="text-sm text-emerald-600">Ingresos activos</p>
+              <p class="mt-1 text-3xl font-extrabold text-emerald-950">
+                {{ kpis().ingresosActivos }}
+              </p>
+            </article>
+            <article
+              class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
+            >
+              <p class="text-sm text-emerald-600">Incidentes abiertos</p>
+              <p class="mt-1 text-3xl font-extrabold text-amber-800">
+                {{ kpis().incidentesAbiertos }}
+              </p>
+            </article>
+          }
+        </div>
+      </section>
+
+      <section>
+        <h2 class="mb-3 text-lg font-semibold text-emerald-950">Empieza por aquí</h2>
+        <ol class="grid gap-3 sm:grid-cols-2">
+          @for (step of steps(); track step.path; let idx = $index) {
+            <li
+              class="flex flex-col rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
+            >
+              <p class="text-xs font-semibold uppercase tracking-wide text-emerald-500">
+                Paso {{ idx + 1 }}
+              </p>
+              <h3 class="mt-1 font-bold text-emerald-950">{{ step.title }}</h3>
+              <p class="mt-1 flex-1 text-sm text-emerald-700">{{ step.detail }}</p>
+              <a
+                [routerLink]="step.path"
+                class="mt-4 inline-flex w-fit rounded-xl bg-emerald-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-600"
+              >
+                {{ step.cta }}
+              </a>
+            </li>
+          }
+        </ol>
+      </section>
+    }
+  </div>
 </section>

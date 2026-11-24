@@ -31,7 +31,7 @@ interface OnboardingStep {
   imports: [Loading, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css',
-  host: { class: 'block h-full min-h-0 overflow-y-auto' },
+  host: { class: 'block h-full min-h-0' },
 })
 export class Home implements OnInit {
   private readonly auth = inject(AuthService);
