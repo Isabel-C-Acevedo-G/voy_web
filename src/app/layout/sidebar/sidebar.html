@@ -56,9 +56,10 @@
             [routerLink]="link.path"
             routerLinkActive="bg-emerald-100 text-emerald-800"
             [routerLinkActiveOptions]="{ exact: link.path === '/' }"
-            class="block rounded-xl px-3 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-50"
+            class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-50"
           >
-            {{ link.label }}
+            <app-nav-icon [name]="link.icon" />
+            <span>{{ link.label }}</span>
           </a>
         </li>
       }
