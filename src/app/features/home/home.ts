@@ -2,6 +2,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
 
+import { Usuario } from '../../core/models/usuario.model';
 import { AuthService } from '../../core/services/auth.service';
 import { EspacioService } from '../../core/services/espacio.service';
 import { IncidenteService } from '../../core/services/incidente.service';
@@ -145,42 +146,59 @@ export class Home implements OnInit {
     ];
   });
 
+  firstName(u: Usuario): string {
+    const n = (u.nombre ?? '').trim();
+    return n ? n.split(/\s+/)[0] : 'VOY';
+  }
+
   ngOnInit(): void {
-    const user = this.auth.user();
-    const rol = this.auth.rol();
+    // Evita 403 del interceptor: solo pedimos endpoints permitidos por rol.
+    const ensureUser = this.auth.user()
+      ? of(this.auth.user())
+      : this.auth.me().pipe(catchError(() => of(null)));
 
-    const espacios$ = this.espaciosApi.list({ activo: true }).pipe(catchError(() => of([])));
-    const ingresos$ = this.ingresosApi
-      .list({ estado: 'activo' })
-      .pipe(catchError(() => of([])));
-    const reservas$ =
-      rol === 'ciclista' && user
-        ? this.reservasApi
-            .list({ estado: 'activa', idUsuario: user.idUsuario })
-            .pipe(catchError(() => of([])))
-        : this.reservasApi.list({ estado: 'activa' }).pipe(catchError(() => of([])));
-    const incidentes$ = this.incidentesApi
-      .list({ estado: 'abierto' })
-      .pipe(catchError(() => of([])));
+    ensureUser.subscribe((user) => {
+      const rol = this.auth.rol();
+      const espacios$ = this.espaciosApi.list({ activo: true }).pipe(catchError(() => of([])));
 
-    forkJoin({
-      espacios: espacios$,
-      ingresos: ingresos$,
-      reservas: reservas$,
-      incidentes: incidentes$,
-    }).subscribe({
-      next: ({ espacios, ingresos, reservas, incidentes }) => {
-        this.kpis.set({
-          libres: espacios.filter((e) => e.estado === 'libre').length,
-          ocupados: espacios.filter((e) => e.estado === 'ocupado').length,
-          reservados: espacios.filter((e) => e.estado === 'reservado').length,
-          ingresosActivos: ingresos.length,
-          reservasActivas: reservas.length,
-          incidentesAbiertos: incidentes.length,
-        });
-        this.loading.set(false);
-      },
-      error: () => this.loading.set(false),
+      const ingresos$ =
+        rol === 'administrador' || rol === 'vigilante'
+          ? this.ingresosApi.list({ estado: 'activo' }).pipe(catchError(() => of([])))
+          : of([]);
+
+      const reservas$ =
+        rol === 'ciclista' && user
+          ? this.reservasApi
+              .list({ estado: 'activa', idUsuario: user.idUsuario })
+              .pipe(catchError(() => of([])))
+          : rol === 'administrador'
+            ? this.reservasApi.list({ estado: 'activa' }).pipe(catchError(() => of([])))
+            : of([]);
+
+      const incidentes$ =
+        rol === 'administrador' || rol === 'vigilante'
+          ? this.incidentesApi.list({ estado: 'abierto' }).pipe(catchError(() => of([])))
+          : of([]);
+
+      forkJoin({
+        espacios: espacios$,
+        ingresos: ingresos$,
+        reservas: reservas$,
+        incidentes: incidentes$,
+      }).subscribe({
+        next: ({ espacios, ingresos, reservas, incidentes }) => {
+          this.kpis.set({
+            libres: espacios.filter((e) => e.estado === 'libre').length,
+            ocupados: espacios.filter((e) => e.estado === 'ocupado').length,
+            reservados: espacios.filter((e) => e.estado === 'reservado').length,
+            ingresosActivos: ingresos.length,
+            reservasActivas: reservas.length,
+            incidentesAbiertos: incidentes.length,
+          });
+          this.loading.set(false);
+        },
+        error: () => this.loading.set(false),
+      });
     });
   }
 }
