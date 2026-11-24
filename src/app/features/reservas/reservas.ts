@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Espacio } from '../../core/models/espacio.model';
@@ -8,12 +8,15 @@ import { Reserva } from '../../core/models/reserva.model';
 import { AuthService } from '../../core/services/auth.service';
 import { EspacioService } from '../../core/services/espacio.service';
 import { ReservaService } from '../../core/services/reserva.service';
+import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
+import { FormListPage } from '../../shared/form-list-page/form-list-page';
 
 @Component({
   selector: 'app-reservas',
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, FormListPage],
   templateUrl: './reservas.html',
   styleUrl: './reservas.css',
+  host: { class: 'block h-full min-h-0' },
 })
 export class Reservas implements OnInit {
   private readonly reservasApi = inject(ReservaService);
@@ -22,7 +25,11 @@ export class Reservas implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   readonly items = signal<Reserva[]>([]);
+  readonly page = signal(1);
+  readonly pageSize = DEFAULT_PAGE_SIZE;
+  readonly pageItems = computed(() => pageSlice(this.items(), this.page(), this.pageSize));
   readonly libres = signal<Espacio[]>([]);
+  readonly espacios = signal<Espacio[]>([]);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly saving = signal(false);
@@ -33,9 +40,17 @@ export class Reservas implements OnInit {
   });
 
   ngOnInit(): void {
+    this.espaciosApi.list().subscribe({
+      next: (list) => this.espacios.set(list),
+      error: () => this.espacios.set([]),
+    });
     this.reload();
     // refresca “vence en…” cada 30s
     setInterval(() => this.now.set(Date.now()), 30_000);
+  }
+
+  labelEspacio(id: number): string {
+    return this.espacios().find((e) => e.idEspacio === id)?.codigo ?? `#${id}`;
   }
 
   reload(): void {
@@ -46,6 +61,7 @@ export class Reservas implements OnInit {
       this.reservasApi.list({ idUsuario }).subscribe({
         next: (list) => {
           this.items.set(list);
+          this.page.set(1);
           this.loading.set(false);
         },
         error: (err: HttpErrorResponse) => {

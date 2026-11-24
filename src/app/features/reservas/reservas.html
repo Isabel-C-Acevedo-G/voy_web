@@ -1,93 +1,108 @@
-<section class="space-y-6">
-  <header>
-    <h1 class="text-3xl font-extrabold text-emerald-950">Reservas</h1>
-    <p class="text-emerald-700">Reserva un espacio libre. Expira a los 30 minutos (backend).</p>
-  </header>
+<app-form-list-page>
+  <div pageTitle>
+    <header>
+      <h1 class="text-3xl font-extrabold text-emerald-950">Reservas</h1>
+      <p class="text-emerald-700">Reserva un espacio libre. Expira a los 30 minutos (backend).</p>
+    </header>
+  </div>
 
-  @if (error(); as err) {
-    <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
-  }
-
-  <form
-    class="flex flex-wrap items-end gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm"
-    [formGroup]="form"
-    (ngSubmit)="submit()"
-  >
-    <label class="min-w-[12rem] flex-1 space-y-1">
-      <span class="text-sm font-medium text-emerald-800">Espacio libre</span>
-      <select formControlName="idEspacio" class="w-full rounded-xl border border-emerald-200 px-3 py-2">
-        <option value="">Selecciona…</option>
-        @for (e of libres(); track e.idEspacio) {
-          <option [value]="e.idEspacio">{{ e.codigo }} (#{{ e.idEspacio }})</option>
-        }
-      </select>
-    </label>
-    <button
-      type="submit"
-      class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
-      [disabled]="saving() || libres().length === 0"
-    >
-      {{ saving() ? 'Reservando…' : 'Reservar' }}
-    </button>
-    @if (libres().length === 0) {
-      <p class="w-full text-sm text-amber-700">No hay espacios libres ahora.</p>
+  <div pageForm class="space-y-4">
+    @if (error(); as err) {
+      <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
     }
-  </form>
 
-  @if (loading()) {
-    <p class="text-emerald-700">Cargando…</p>
-  } @else if (items().length === 0) {
-    <p class="rounded-xl border border-dashed border-emerald-200 bg-white p-6 text-emerald-700">
-      No tienes reservas todavía.
-    </p>
-  } @else {
-    <ul class="space-y-3">
-      @for (r of items(); track r.idReserva) {
-        <li
-          class="rounded-[var(--radius-card)] border bg-white p-4 shadow-sm"
-          [class]="
-            estaPorVencer(r)
-              ? 'border-amber-300 ring-1 ring-amber-200'
-              : 'border-emerald-100'
-          "
-        >
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <p class="font-semibold text-emerald-950">
-                Reserva #{{ r.idReserva }} · espacio {{ r.idEspacio }}
-              </p>
-              <p class="text-sm text-emerald-700">
-                Creada {{ r.fechaReserva | date: 'short' }} · vence
-                {{ r.fechaExpiracion | date: 'short' }}
-              </p>
-              @if (r.estado === 'activa') {
-                <p
-                  class="mt-1 text-sm font-medium"
-                  [class]="estaPorVencer(r) ? 'text-amber-700' : 'text-emerald-700'"
-                >
-                  Quedan ~{{ minutosRestantes(r.fechaExpiracion) }} min
-                </p>
-              }
-            </div>
-            <div class="flex items-center gap-2">
-              <span
-                class="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800"
-              >
-                {{ r.estado }}
-              </span>
-              @if (r.estado === 'activa') {
-                <button
-                  type="button"
-                  class="rounded-xl border border-emerald-200 px-3 py-1.5 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
-                  (click)="cancelar(r)"
-                >
-                  Cancelar
-                </button>
-              }
-            </div>
-          </div>
-        </li>
+    <form
+      class="flex flex-col gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+    >
+      <label class="block space-y-1">
+        <span class="text-sm font-medium text-emerald-800">Espacio libre</span>
+        <select formControlName="idEspacio" class="w-full rounded-xl border border-emerald-200 px-3 py-2">
+          <option value="">Selecciona…</option>
+          @for (e of libres(); track e.idEspacio) {
+            <option [value]="e.idEspacio">{{ e.codigo }}</option>
+          }
+        </select>
+      </label>
+      <button
+        type="submit"
+        class="w-full rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+        [disabled]="saving() || libres().length === 0"
+      >
+        {{ saving() ? 'Reservando…' : 'Reservar' }}
+      </button>
+      @if (libres().length === 0) {
+        <p class="text-sm text-amber-700">No hay espacios libres ahora.</p>
       }
-    </ul>
-  }
-</section>
+    </form>
+  </div>
+
+  <div pageList>
+    @if (loading()) {
+      <p class="text-emerald-700">Cargando…</p>
+    } @else if (items().length === 0) {
+      <p class="rounded-xl border border-dashed border-emerald-200 bg-white p-6 text-emerald-700">
+        No tienes reservas todavía.
+      </p>
+    } @else {
+      <ul class="space-y-3 pb-2">
+        @for (r of pageItems(); track r.idReserva) {
+          <li
+            class="rounded-[var(--radius-card)] border bg-white p-4 shadow-sm"
+            [class]="
+              estaPorVencer(r)
+                ? 'border-amber-300 ring-1 ring-amber-200'
+                : 'border-emerald-100'
+            "
+          >
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p class="font-semibold text-emerald-950">
+                  Reserva #{{ r.idReserva }} · {{ labelEspacio(r.idEspacio) }}
+                </p>
+                <p class="text-sm text-emerald-700">
+                  Creada {{ r.fechaReserva | date: 'short' }} · vence
+                  {{ r.fechaExpiracion | date: 'short' }}
+                </p>
+                @if (r.estado === 'activa') {
+                  <p
+                    class="mt-1 text-sm font-medium"
+                    [class]="estaPorVencer(r) ? 'text-amber-700' : 'text-emerald-700'"
+                  >
+                    Quedan ~{{ minutosRestantes(r.fechaExpiracion) }} min
+                  </p>
+                }
+              </div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800"
+                >
+                  {{ r.estado }}
+                </span>
+                @if (r.estado === 'activa') {
+                  <button
+                    type="button"
+                    class="rounded-xl border border-emerald-200 px-3 py-1.5 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
+                    (click)="cancelar(r)"
+                  >
+                    Cancelar
+                  </button>
+                }
+              </div>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div pagePager>
+    <app-pagination
+      [total]="items().length"
+      [pageSize]="pageSize"
+      [page]="page()"
+      (pageChange)="page.set($event)"
+    />
+  </div>
+</app-form-list-page>

@@ -4,16 +4,18 @@ import { filter } from 'rxjs';
 
 import { VoyRol } from '../../core/models/auth.model';
 import { AuthService } from '../../core/services/auth.service';
+import { NavIcon, NavIconName } from '../../shared/nav-icon/nav-icon';
 
 interface NavLink {
   path: string;
   label: string;
+  icon: NavIconName;
   roles?: VoyRol[];
 }
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, NavIcon],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })
@@ -26,17 +28,22 @@ export class Sidebar {
   readonly open = signal(false);
 
   private readonly allLinks: NavLink[] = [
-    { path: '/', label: 'Inicio' },
-    { path: '/bicicletas', label: 'Bicicletas' },
-    { path: '/reservas', label: 'Reservas', roles: ['ciclista', 'administrador'] },
-    { path: '/perfil', label: 'Mi perfil' },
-    { path: '/espacios', label: 'Espacios' },
-    { path: '/ingresos', label: 'Ingresos', roles: ['administrador', 'vigilante'] },
-    { path: '/salidas', label: 'Salidas', roles: ['administrador', 'vigilante'] },
-    { path: '/incidentes', label: 'Incidentes', roles: ['administrador', 'vigilante'] },
-    { path: '/notas', label: 'Notas', roles: ['administrador', 'vigilante'] },
-    { path: '/usuarios', label: 'Usuarios', roles: ['administrador'] },
-    { path: '/reportes', label: 'Reportes', roles: ['administrador'] },
+    { path: '/', label: 'Inicio', icon: 'home' },
+    { path: '/bicicletas', label: 'Bicicletas', icon: 'bike' },
+    { path: '/reservas', label: 'Reservas', icon: 'calendar', roles: ['ciclista', 'administrador'] },
+    { path: '/perfil', label: 'Mi perfil', icon: 'user' },
+    { path: '/espacios', label: 'Espacios', icon: 'grid' },
+    { path: '/ingresos', label: 'Ingresos', icon: 'login', roles: ['administrador', 'vigilante'] },
+    { path: '/salidas', label: 'Salidas', icon: 'logout', roles: ['administrador', 'vigilante'] },
+    {
+      path: '/incidentes',
+      label: 'Incidentes',
+      icon: 'alert',
+      roles: ['administrador', 'vigilante'],
+    },
+    { path: '/notas', label: 'Notas', icon: 'note', roles: ['administrador', 'vigilante'] },
+    { path: '/usuarios', label: 'Usuarios', icon: 'users', roles: ['administrador'] },
+    { path: '/reportes', label: 'Reportes', icon: 'chart', roles: ['administrador'] },
   ];
 
   readonly links = computed(() => {

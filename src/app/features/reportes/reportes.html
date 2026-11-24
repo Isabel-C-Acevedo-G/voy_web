@@ -1,128 +1,143 @@
-<section class="space-y-6">
-  <header>
-    <h1 class="text-3xl font-extrabold text-emerald-950">Reportes</h1>
-    <p class="text-emerald-700">Ocupación, movimientos y usuarios frecuentes (Emerald).</p>
-  </header>
+<app-list-page>
+  <div listHeader class="space-y-4">
+    <header>
+      <h1 class="text-3xl font-extrabold text-emerald-950">Reportes</h1>
+      <p class="text-emerald-700">Ocupación, movimientos y usuarios frecuentes (Emerald).</p>
+    </header>
 
-  @if (error(); as err) {
-    <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
-  }
+    @if (error(); as err) {
+      <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
+    }
 
-  <form
-    class="flex flex-wrap items-end gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm"
-    [formGroup]="form"
-    (ngSubmit)="generar()"
-  >
-    <label class="space-y-1">
-      <span class="text-sm font-medium text-emerald-800">Tipo</span>
-      <select formControlName="tipo" class="rounded-xl border border-emerald-200 px-3 py-2">
-        <option value="ocupacion">ocupación</option>
-        <option value="movimientos">movimientos</option>
-        <option value="usuarios_frecuentes">usuarios frecuentes</option>
-      </select>
-    </label>
-    <label class="space-y-1">
-      <span class="text-sm font-medium text-emerald-800">Desde</span>
-      <input
-        type="date"
-        formControlName="fechaDesde"
-        class="rounded-xl border border-emerald-200 px-3 py-2"
-      />
-    </label>
-    <label class="space-y-1">
-      <span class="text-sm font-medium text-emerald-800">Hasta</span>
-      <input
-        type="date"
-        formControlName="fechaHasta"
-        class="rounded-xl border border-emerald-200 px-3 py-2"
-      />
-    </label>
-    <button
-      type="submit"
-      class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
-      [disabled]="loading()"
+    <form
+      class="flex flex-wrap items-end gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm"
+      [formGroup]="form"
+      (ngSubmit)="generar()"
     >
-      {{ loading() ? 'Generando…' : 'Ver JSON' }}
-    </button>
-    <button
-      type="button"
-      class="rounded-xl border border-emerald-200 px-4 py-2 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
-      (click)="descargarCsv()"
-    >
-      Descargar CSV
-    </button>
-  </form>
+      <label class="space-y-1">
+        <span class="text-sm font-medium text-emerald-800">Tipo</span>
+        <select formControlName="tipo" class="rounded-xl border border-emerald-200 px-3 py-2">
+          <option value="ocupacion">ocupación</option>
+          <option value="movimientos">movimientos</option>
+          <option value="usuarios_frecuentes">usuarios frecuentes</option>
+        </select>
+      </label>
+      <label class="space-y-1">
+        <span class="text-sm font-medium text-emerald-800">Desde</span>
+        <input
+          type="date"
+          formControlName="fechaDesde"
+          class="rounded-xl border border-emerald-200 px-3 py-2"
+        />
+      </label>
+      <label class="space-y-1">
+        <span class="text-sm font-medium text-emerald-800">Hasta</span>
+        <input
+          type="date"
+          formControlName="fechaHasta"
+          class="rounded-xl border border-emerald-200 px-3 py-2"
+        />
+      </label>
+      <button
+        type="submit"
+        class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+        [disabled]="loading()"
+      >
+        {{ loading() ? 'Generando…' : 'Ver JSON' }}
+      </button>
+      <button
+        type="button"
+        class="rounded-xl border border-emerald-200 px-4 py-2 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
+        (click)="descargarCsv()"
+      >
+        Descargar CSV
+      </button>
+    </form>
+  </div>
 
-  @if (ocupacion(); as o) {
-    <article class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-6 shadow-sm">
-      <h2 class="text-lg font-semibold text-emerald-950">Ocupación</h2>
-      <p class="text-sm text-emerald-700">
-        {{ o.totalEspaciosActivos }} espacios activos · {{ o.fechaDesde }} → {{ o.fechaHasta }}
-      </p>
-      <ul class="mt-4 space-y-3">
-        @for (row of o.porEstado | keyvalue; track row.key) {
-          <li>
-            <div class="mb-1 flex justify-between text-sm text-emerald-800">
-              <span>{{ row.key }}</span>
-              <span class="font-semibold">{{ row.value }}</span>
-            </div>
-            <div class="h-3 overflow-hidden rounded-full bg-emerald-100">
-              <div
-                class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600"
-                [style.width]="barWidth(+row.value, maxEstado())"
-              ></div>
-            </div>
-          </li>
-        }
-      </ul>
-    </article>
-  }
-
-  @if (movimientos(); as m) {
-    <article
-      class="grid gap-4 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-6 shadow-sm sm:grid-cols-2"
-    >
-      <div class="rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 p-5 text-white">
-        <p class="text-sm text-emerald-50">Ingresos</p>
-        <p class="text-4xl font-extrabold">{{ m.totalIngresos }}</p>
-      </div>
-      <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-5">
-        <p class="text-sm text-emerald-700">Salidas</p>
-        <p class="text-4xl font-extrabold text-emerald-900">{{ m.totalSalidas }}</p>
-      </div>
-    </article>
-  }
-
-  @if (frecuentes(); as f) {
-    <article class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-6 shadow-sm">
-      <h2 class="text-lg font-semibold text-emerald-950">Usuarios frecuentes</h2>
-      @if (f.usuarios.length === 0) {
-        <p class="mt-2 text-sm text-emerald-700">Sin datos en el rango.</p>
-      } @else {
+  <div listBody class="space-y-6 pb-2">
+    @if (ocupacion(); as o) {
+      <article class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-emerald-950">Ocupación</h2>
+        <p class="text-sm text-emerald-700">
+          {{ o.totalEspaciosActivos }} espacios activos · {{ o.fechaDesde }} → {{ o.fechaHasta }}
+        </p>
         <ul class="mt-4 space-y-3">
-          @for (u of f.usuarios; track u.idUsuario) {
+          @for (row of o.porEstado | keyvalue; track row.key) {
             <li>
-              <div class="mb-1 flex justify-between text-sm">
-                <span class="font-medium text-emerald-900">{{ u.nombre }}</span>
-                <span class="text-emerald-700">{{ u.ingresos }} ingresos</span>
+              <div class="mb-1 flex justify-between text-sm text-emerald-800">
+                <span>{{ row.key }}</span>
+                <span class="font-semibold">{{ row.value }}</span>
               </div>
-              <div class="h-2.5 overflow-hidden rounded-full bg-emerald-100">
+              <div class="h-3 overflow-hidden rounded-full bg-emerald-100">
                 <div
-                  class="h-full rounded-full bg-emerald-500"
-                  [style.width]="barWidth(u.ingresos, maxFrecuente())"
+                  class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600"
+                  [style.width]="barWidth(+row.value, maxEstado())"
                 ></div>
               </div>
             </li>
           }
         </ul>
-      }
-    </article>
-  }
+      </article>
+    }
 
-  @if (csvPreview(); as csv) {
-    <pre
-      class="overflow-x-auto rounded-xl border border-emerald-100 bg-emerald-50 p-4 text-xs text-emerald-900"
-      >{{ csv }}</pre
-    >
-  }
-</section>
+    @if (movimientos(); as m) {
+      <article
+        class="grid gap-4 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-6 shadow-sm sm:grid-cols-2"
+      >
+        <div class="rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 p-5 text-white">
+          <p class="text-sm text-emerald-50">Ingresos</p>
+          <p class="text-4xl font-extrabold">{{ m.totalIngresos }}</p>
+        </div>
+        <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-5">
+          <p class="text-sm text-emerald-700">Salidas</p>
+          <p class="text-4xl font-extrabold text-emerald-900">{{ m.totalSalidas }}</p>
+        </div>
+      </article>
+    }
+
+    @if (frecuentes(); as f) {
+      <article class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-emerald-950">Usuarios frecuentes</h2>
+        @if (f.usuarios.length === 0) {
+          <p class="mt-2 text-sm text-emerald-700">Sin datos en el rango.</p>
+        } @else {
+          <ul class="mt-4 space-y-3">
+            @for (u of frecuentesPage(); track u.idUsuario) {
+              <li>
+                <div class="mb-1 flex justify-between text-sm">
+                  <span class="font-medium text-emerald-900">{{ u.nombre }}</span>
+                  <span class="text-emerald-700">{{ u.ingresos }} ingresos</span>
+                </div>
+                <div class="h-2.5 overflow-hidden rounded-full bg-emerald-100">
+                  <div
+                    class="h-full rounded-full bg-emerald-500"
+                    [style.width]="barWidth(u.ingresos, maxFrecuente())"
+                  ></div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </article>
+    }
+
+    @if (csvPreview(); as csv) {
+      <pre
+        class="overflow-x-auto rounded-xl border border-emerald-100 bg-emerald-50 p-4 text-xs text-emerald-900"
+        >{{ csv }}</pre
+      >
+    }
+  </div>
+
+  <div listFooter>
+    @if (frecuentes(); as f) {
+      <app-pagination
+        [total]="f.usuarios.length"
+        [pageSize]="pageSize"
+        [page]="page()"
+        (pageChange)="page.set($event)"
+      />
+    }
+  </div>
+</app-list-page>

@@ -10,6 +10,7 @@ import { AuthService } from '../../../core/services/auth.service';
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
+  host: { class: 'block w-full min-h-screen' },
 })
 export class Login implements OnInit {
   private readonly auth = inject(AuthService);

@@ -1,0 +1,31 @@
+<section class="flex h-full min-h-0 flex-col">
+  <!-- Título full width, fijo -->
+  <div class="shrink-0 pb-3">
+    <ng-content select="[pageTitle]" />
+  </div>
+
+  <!--
+    <lg: apilar form → lista
+    lg+: 2/5 form | 3/5 lista + paginación fija en la columna
+  -->
+  <div
+    class="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden lg:grid lg:grid-cols-5 lg:items-stretch lg:gap-6"
+  >
+    <aside
+      class="shrink-0 space-y-4 lg:col-span-2 lg:max-h-full lg:overflow-y-auto lg:overscroll-contain lg:pr-1"
+    >
+      <ng-content select="[pageForm]" />
+    </aside>
+
+    <div class="flex min-h-[12rem] flex-1 flex-col lg:col-span-3 lg:min-h-0">
+      <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1">
+        <ng-content select="[pageList]" />
+      </div>
+      <div
+        class="shrink-0 border-t border-emerald-100 bg-emerald-50/95 pt-3 backdrop-blur supports-[backdrop-filter]:bg-emerald-50/80"
+      >
+        <ng-content select="[pagePager]" />
+      </div>
+    </div>
+  </div>
+</section>

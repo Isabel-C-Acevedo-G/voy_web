@@ -6,12 +6,16 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Espacio } from '../../core/models/espacio.model';
 import { AuthService } from '../../core/services/auth.service';
 import { EspacioService } from '../../core/services/espacio.service';
+import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
+import { FormListPage } from '../../shared/form-list-page/form-list-page';
+import { ListPage } from '../../shared/list-page/list-page';
 
 @Component({
   selector: 'app-espacios',
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, Pagination, FormListPage, ListPage],
   templateUrl: './espacios.html',
   styleUrl: './espacios.css',
+  host: { class: 'block h-full min-h-0' },
 })
 export class Espacios implements OnInit {
   private readonly espaciosApi = inject(EspacioService);
@@ -19,6 +23,9 @@ export class Espacios implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   readonly items = signal<Espacio[]>([]);
+  readonly page = signal(1);
+  readonly pageSize = DEFAULT_PAGE_SIZE;
+  readonly pageItems = computed(() => pageSlice(this.items(), this.page(), this.pageSize));
   readonly loading = signal(true);
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
@@ -40,6 +47,7 @@ export class Espacios implements OnInit {
     this.espaciosApi.list().subscribe({
       next: (list) => {
         this.items.set(list);
+        this.page.set(1);
         this.loading.set(false);
       },
       error: (err: HttpErrorResponse) => {

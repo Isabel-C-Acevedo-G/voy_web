@@ -26,10 +26,10 @@
 }
 
 <aside
-  class="fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] shrink-0 translate-x-[-105%] flex-col border-r border-emerald-100 bg-gradient-to-b from-emerald-50 to-white transition-transform duration-200 ease-out md:static md:z-0 md:w-56 md:max-w-none md:translate-x-0"
+  class="fixed inset-y-0 left-0 z-50 flex h-dvh w-64 max-w-[85vw] translate-x-[-105%] flex-col border-r border-emerald-100 bg-gradient-to-b from-emerald-50 to-white transition-transform duration-200 ease-out md:w-56 md:max-w-none md:translate-x-0"
   [class.translate-x-0]="open()"
 >
-  <div class="hidden border-b border-emerald-100 px-4 py-5 md:block">
+  <div class="shrink-0 border-b border-emerald-100 px-4 py-5">
     <a routerLink="/" class="flex items-center gap-2">
       <span
         class="rounded-lg bg-emerald-500 px-2 py-1 text-sm font-extrabold tracking-wide text-white"
@@ -48,16 +48,7 @@
     }
   </div>
 
-  <div class="border-b border-emerald-100 px-4 py-4 md:hidden">
-    @if (rol(); as r) {
-      <span
-        class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800"
-        >{{ r }}</span
-      >
-    }
-  </div>
-
-  <nav class="flex-1 overflow-y-auto px-3 py-4">
+  <nav class="min-h-0 flex-1 overflow-y-auto px-3 py-4">
     <ul class="space-y-1">
       @for (link of links(); track link.path) {
         <li>
@@ -65,16 +56,17 @@
             [routerLink]="link.path"
             routerLinkActive="bg-emerald-100 text-emerald-800"
             [routerLinkActiveOptions]="{ exact: link.path === '/' }"
-            class="block rounded-xl px-3 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-50"
+            class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-50"
           >
-            {{ link.label }}
+            <app-nav-icon [name]="link.icon" />
+            <span>{{ link.label }}</span>
           </a>
         </li>
       }
     </ul>
   </nav>
 
-  <div class="border-t border-emerald-100 px-4 py-3">
+  <div class="shrink-0 border-t border-emerald-100 px-4 py-3">
     @if (user(); as u) {
       <p class="truncate text-xs font-medium text-emerald-900">{{ u.nombre }}</p>
       <p class="truncate text-xs text-emerald-600">{{ u.correo }}</p>

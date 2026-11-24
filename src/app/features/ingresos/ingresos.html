@@ -1,99 +1,119 @@
-<section class="space-y-6">
-  <header>
-    <h1 class="text-3xl font-extrabold text-emerald-950">Ingresos</h1>
-    <p class="text-emerald-700">
-      El sistema asigna un espacio libre automáticamente al registrar el ingreso.
-    </p>
-  </header>
+<app-form-list-page>
+  <div pageTitle>
+    <header>
+      <h1 class="text-3xl font-extrabold text-emerald-950">Ingresos</h1>
+      <p class="text-emerald-700">
+        El sistema asigna un espacio libre automáticamente al registrar el ingreso.
+      </p>
+    </header>
+  </div>
 
-  @if (error(); as err) {
-    <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
-  }
+  <div pageForm class="space-y-4">
+    @if (error(); as err) {
+      <div class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ err }}</div>
+    }
 
-  @if (lastCreated(); as ing) {
-    <div
-      class="rounded-[var(--radius-card)] bg-gradient-to-br from-emerald-400 to-emerald-600 p-5 text-white shadow-sm"
+    @if (lastCreated(); as ing) {
+      <div
+        class="rounded-[var(--radius-card)] bg-gradient-to-br from-emerald-400 to-emerald-600 p-5 text-white shadow-sm"
+      >
+        <p class="text-sm text-emerald-50">Ingreso #{{ ing.idIngreso }} registrado</p>
+        <p class="mt-1 text-xl font-bold">Espacio: {{ labelEspacioId(ing.idEspacio) }}</p>
+        <p class="text-sm text-emerald-50">
+          {{ labelBiciId(ing.idBicicleta) }} · {{ ing.estado }}
+        </p>
+      </div>
+    }
+
+    <form
+      class="grid gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
     >
-      <p class="text-sm text-emerald-50">Ingreso #{{ ing.idIngreso }} registrado</p>
-      <p class="mt-1 text-xl font-bold">Espacio asignado: #{{ ing.idEspacio }}</p>
-      <p class="text-sm text-emerald-50">Bicicleta {{ ing.idBicicleta }} · {{ ing.estado }}</p>
-    </div>
-  }
-
-  <form
-    class="grid gap-3 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-5 shadow-sm sm:grid-cols-2"
-    [formGroup]="form"
-    (ngSubmit)="submit()"
-  >
-    <label class="block space-y-1 sm:col-span-2">
-      <span class="text-sm font-medium text-emerald-800">Bicicleta activa</span>
-      <select formControlName="idBicicleta" class="w-full rounded-xl border border-emerald-200 px-3 py-2">
-        <option value="">Selecciona…</option>
-        @for (b of bicicletas(); track b.idBicicleta) {
-          <option [value]="b.idBicicleta">
-            #{{ b.idBicicleta }} · {{ b.marca }} {{ b.modelo }} ({{ b.numeroSerie }})
-          </option>
-        }
-      </select>
-    </label>
-    <label class="block space-y-1">
-      <span class="text-sm font-medium text-emerald-800">idReserva (opcional)</span>
-      <input
-        formControlName="idReserva"
-        type="number"
-        class="w-full rounded-xl border border-emerald-200 px-3 py-2"
-        placeholder="si viene con reserva"
-      />
-    </label>
-    <label class="block space-y-1">
-      <span class="text-sm font-medium text-emerald-800">Observaciones</span>
-      <input
-        formControlName="observaciones"
-        class="w-full rounded-xl border border-emerald-200 px-3 py-2"
-      />
-    </label>
-    <div class="sm:col-span-2">
+      <label class="block space-y-1">
+        <span class="text-sm font-medium text-emerald-800">Bicicleta</span>
+        <select
+          formControlName="idBicicleta"
+          class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+        >
+          <option value="">Selecciona…</option>
+          @for (b of bicicletas(); track b.idBicicleta) {
+            <option [value]="b.idBicicleta">{{ labelBici(b) }}</option>
+          }
+        </select>
+      </label>
+      <label class="block space-y-1">
+        <span class="text-sm font-medium text-emerald-800">Reserva (opcional)</span>
+        <select
+          formControlName="idReserva"
+          class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+        >
+          <option value="">Sin reserva</option>
+          @for (r of reservas(); track r.idReserva) {
+            <option [value]="r.idReserva">{{ labelReserva(r) }}</option>
+          }
+        </select>
+      </label>
+      <label class="block space-y-1">
+        <span class="text-sm font-medium text-emerald-800">Observaciones</span>
+        <input
+          formControlName="observaciones"
+          class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+        />
+      </label>
       <button
         type="submit"
-        class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+        class="w-full rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
         [disabled]="saving()"
       >
         {{ saving() ? 'Registrando…' : 'Registrar ingreso' }}
       </button>
-    </div>
-  </form>
+    </form>
+  </div>
 
-  @if (loading()) {
-    <p class="text-emerald-700">Cargando…</p>
-  } @else {
-    <ul class="space-y-3">
-      @for (i of items(); track i.idIngreso) {
-        <li
-          class="flex flex-wrap items-center justify-between gap-2 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
-        >
-          <div>
-            <p class="font-semibold text-emerald-950">
-              Ingreso #{{ i.idIngreso }} · bici {{ i.idBicicleta }} → espacio {{ i.idEspacio }}
-            </p>
-            <p class="text-sm text-emerald-700">
-              {{ i.fechaIngreso | date: 'short' }}
-              @if (i.idReserva) {
-                · reserva {{ i.idReserva }}
-              }
-            </p>
-          </div>
-          <span
-            class="rounded-full px-2.5 py-0.5 text-xs font-medium"
-            [class]="
-              i.estado === 'activo'
-                ? 'bg-emerald-100 text-emerald-800'
-                : 'bg-slate-100 text-slate-600'
-            "
+  <div pageList>
+    @if (loading()) {
+      <p class="text-emerald-700">Cargando…</p>
+    } @else {
+      <ul class="space-y-3 pb-2">
+        @for (i of pageItems(); track i.idIngreso) {
+          <li
+            class="flex flex-wrap items-center justify-between gap-2 rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
           >
-            {{ i.estado }}
-          </span>
-        </li>
-      }
-    </ul>
-  }
-</section>
+            <div>
+              <p class="font-semibold text-emerald-950">
+                Ingreso #{{ i.idIngreso }} · {{ labelBiciId(i.idBicicleta) }} →
+                {{ labelEspacioId(i.idEspacio) }}
+              </p>
+              <p class="text-sm text-emerald-700">
+                {{ i.fechaIngreso | date: 'short' }}
+                @if (i.idReserva) {
+                  · reserva #{{ i.idReserva }}
+                }
+              </p>
+            </div>
+            <span
+              class="rounded-full px-2.5 py-0.5 text-xs font-medium"
+              [class]="
+                i.estado === 'activo'
+                  ? 'bg-emerald-100 text-emerald-800'
+                  : 'bg-slate-100 text-slate-600'
+              "
+            >
+              {{ i.estado }}
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div pagePager>
+    <app-pagination
+      [total]="items().length"
+      [pageSize]="pageSize"
+      [page]="page()"
+      (pageChange)="page.set($event)"
+    />
+  </div>
+</app-form-list-page>

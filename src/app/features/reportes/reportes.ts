@@ -11,12 +11,15 @@ import {
   ReporteService,
   ReporteUsuariosFrecuentes,
 } from '../../core/services/reporte.service';
+import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
+import { ListPage } from '../../shared/list-page/list-page';
 
 @Component({
   selector: 'app-reportes',
-  imports: [ReactiveFormsModule, KeyValuePipe],
+  imports: [ReactiveFormsModule, KeyValuePipe, Pagination, ListPage],
   templateUrl: './reportes.html',
   styleUrl: './reportes.css',
+  host: { class: 'block h-full min-h-0' },
 })
 export class Reportes {
   private readonly reportesApi = inject(ReporteService);
@@ -26,6 +29,8 @@ export class Reportes {
   readonly error = signal<string | null>(null);
   readonly data = signal<ReporteJson | null>(null);
   readonly csvPreview = signal<string | null>(null);
+  readonly page = signal(1);
+  readonly pageSize = DEFAULT_PAGE_SIZE;
 
   readonly form = this.fb.nonNullable.group({
     tipo: ['ocupacion' as TipoReporte, Validators.required],
@@ -46,6 +51,11 @@ export class Reportes {
   readonly frecuentes = computed(() => {
     const d = this.data();
     return d?.tipo === 'usuarios_frecuentes' ? (d as ReporteUsuariosFrecuentes) : null;
+  });
+
+  readonly frecuentesPage = computed(() => {
+    const f = this.frecuentes();
+    return f ? pageSlice(f.usuarios, this.page(), this.pageSize) : [];
   });
 
   readonly maxEstado = computed(() => {
@@ -77,6 +87,7 @@ export class Reportes {
     this.reportesApi.getJson(raw.tipo, raw.fechaDesde, raw.fechaHasta).subscribe({
       next: (res) => {
         this.data.set(res);
+        this.page.set(1);
         this.loading.set(false);
       },
       error: (err: HttpErrorResponse) => {

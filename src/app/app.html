@@ -1,22 +1,26 @@
 <app-alert />
 
 @if (showShell()) {
-  <div class="flex min-h-screen flex-col bg-emerald-50 text-emerald-950 md:flex-row">
+  <div class="h-dvh overflow-hidden bg-emerald-50 text-emerald-950">
     <app-sidebar />
 
-    <div class="flex min-w-0 flex-1 flex-col">
-      <main class="page-enter mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 md:py-8">
+    <div class="flex h-dvh min-w-0 flex-col overflow-hidden md:pl-56">
+      <main
+        class="page-enter mx-auto flex w-full max-w-5xl min-h-0 flex-1 flex-col overflow-hidden px-4 py-4 sm:px-6 md:py-5"
+      >
         <router-outlet />
       </main>
 
-      <footer class="border-t border-emerald-100 py-3 text-center text-xs text-emerald-600">
+      <footer
+        class="shrink-0 border-t border-emerald-100 bg-emerald-50 py-2.5 text-center text-xs text-emerald-600"
+      >
         voy_web · Angular + Tailwind Emerald · v1.0.0
       </footer>
     </div>
   </div>
 } @else {
   <div
-    class="page-enter min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100 text-emerald-950"
+    class="page-enter flex min-h-screen w-full flex-col bg-gradient-to-br from-emerald-50 via-white to-emerald-100 text-emerald-950"
   >
     <router-outlet />
   </div>
