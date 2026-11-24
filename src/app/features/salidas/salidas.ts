@@ -2,10 +2,15 @@ import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, of } from 'rxjs';
 
+import { Bicicleta } from '../../core/models/bicicleta.model';
+import { Espacio } from '../../core/models/espacio.model';
 import { Ingreso } from '../../core/models/ingreso.model';
 import { Salida } from '../../core/models/salida.model';
 import { AuthService } from '../../core/services/auth.service';
+import { BicicletaService } from '../../core/services/bicicleta.service';
+import { EspacioService } from '../../core/services/espacio.service';
 import { IngresoService } from '../../core/services/ingreso.service';
 import { SalidaService } from '../../core/services/salida.service';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
@@ -21,6 +26,8 @@ import { FormListPage } from '../../shared/form-list-page/form-list-page';
 export class Salidas implements OnInit {
   private readonly salidasApi = inject(SalidaService);
   private readonly ingresosApi = inject(IngresoService);
+  private readonly bicicletasApi = inject(BicicletaService);
+  private readonly espaciosApi = inject(EspacioService);
   private readonly auth = inject(AuthService);
   private readonly fb = inject(FormBuilder);
 
@@ -29,6 +36,9 @@ export class Salidas implements OnInit {
   readonly pageSize = DEFAULT_PAGE_SIZE;
   readonly pageItems = computed(() => pageSlice(this.items(), this.page(), this.pageSize));
   readonly activos = signal<Ingreso[]>([]);
+  readonly ingresosAll = signal<Ingreso[]>([]);
+  readonly bicicletas = signal<Bicicleta[]>([]);
+  readonly espacios = signal<Espacio[]>([]);
   readonly loading = signal(true);
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
@@ -43,7 +53,33 @@ export class Salidas implements OnInit {
   });
 
   ngOnInit(): void {
+    this.bicicletasApi
+      .list()
+      .pipe(catchError(() => of([])))
+      .subscribe((list) => this.bicicletas.set(list));
+    this.espaciosApi
+      .list()
+      .pipe(catchError(() => of([])))
+      .subscribe((list) => this.espacios.set(list));
     this.reload();
+  }
+
+  labelIngreso(i: Ingreso): string {
+    const b = this.bicicletas().find((x) => x.idBicicleta === i.idBicicleta);
+    const e = this.espacios().find((x) => x.idEspacio === i.idEspacio);
+    const bici = b ? `${b.marca} · ${b.numeroSerie}` : `bici #${i.idBicicleta}`;
+    const esp = e?.codigo ?? `espacio #${i.idEspacio}`;
+    return `#${i.idIngreso} · ${bici} · ${esp}`;
+  }
+
+  labelIngresoId(id: number): string {
+    const i =
+      this.ingresosAll().find((x) => x.idIngreso === id) ??
+      this.activos().find((x) => x.idIngreso === id);
+    if (i) {
+      return this.labelIngreso(i);
+    }
+    return `ingreso #${id}`;
   }
 
   reload(): void {
@@ -64,6 +100,10 @@ export class Salidas implements OnInit {
       next: (list) => this.activos.set(list),
       error: () => this.activos.set([]),
     });
+    this.ingresosApi
+      .list()
+      .pipe(catchError(() => of([])))
+      .subscribe((list) => this.ingresosAll.set(list));
   }
 
   submit(): void {

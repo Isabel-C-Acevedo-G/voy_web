@@ -18,8 +18,10 @@
         class="rounded-[var(--radius-card)] bg-gradient-to-br from-emerald-400 to-emerald-600 p-5 text-white shadow-sm"
       >
         <p class="text-sm text-emerald-50">Ingreso #{{ ing.idIngreso }} registrado</p>
-        <p class="mt-1 text-xl font-bold">Espacio asignado: #{{ ing.idEspacio }}</p>
-        <p class="text-sm text-emerald-50">Bicicleta {{ ing.idBicicleta }} · {{ ing.estado }}</p>
+        <p class="mt-1 text-xl font-bold">Espacio: {{ labelEspacioId(ing.idEspacio) }}</p>
+        <p class="text-sm text-emerald-50">
+          {{ labelBiciId(ing.idBicicleta) }} · {{ ing.estado }}
+        </p>
       </div>
     }
 
@@ -29,24 +31,28 @@
       (ngSubmit)="submit()"
     >
       <label class="block space-y-1">
-        <span class="text-sm font-medium text-emerald-800">Bicicleta activa</span>
-        <select formControlName="idBicicleta" class="w-full rounded-xl border border-emerald-200 px-3 py-2">
+        <span class="text-sm font-medium text-emerald-800">Bicicleta</span>
+        <select
+          formControlName="idBicicleta"
+          class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+        >
           <option value="">Selecciona…</option>
           @for (b of bicicletas(); track b.idBicicleta) {
-            <option [value]="b.idBicicleta">
-              #{{ b.idBicicleta }} · {{ b.marca }} {{ b.modelo }} ({{ b.numeroSerie }})
-            </option>
+            <option [value]="b.idBicicleta">{{ labelBici(b) }}</option>
           }
         </select>
       </label>
       <label class="block space-y-1">
-        <span class="text-sm font-medium text-emerald-800">idReserva (opcional)</span>
-        <input
+        <span class="text-sm font-medium text-emerald-800">Reserva (opcional)</span>
+        <select
           formControlName="idReserva"
-          type="number"
           class="w-full rounded-xl border border-emerald-200 px-3 py-2"
-          placeholder="si viene con reserva"
-        />
+        >
+          <option value="">Sin reserva</option>
+          @for (r of reservas(); track r.idReserva) {
+            <option [value]="r.idReserva">{{ labelReserva(r) }}</option>
+          }
+        </select>
       </label>
       <label class="block space-y-1">
         <span class="text-sm font-medium text-emerald-800">Observaciones</span>
@@ -76,12 +82,13 @@
           >
             <div>
               <p class="font-semibold text-emerald-950">
-                Ingreso #{{ i.idIngreso }} · bici {{ i.idBicicleta }} → espacio {{ i.idEspacio }}
+                Ingreso #{{ i.idIngreso }} · {{ labelBiciId(i.idBicicleta) }} →
+                {{ labelEspacioId(i.idEspacio) }}
               </p>
               <p class="text-sm text-emerald-700">
                 {{ i.fechaIngreso | date: 'short' }}
                 @if (i.idReserva) {
-                  · reserva {{ i.idReserva }}
+                  · reserva #{{ i.idReserva }}
                 }
               </p>
             </div>

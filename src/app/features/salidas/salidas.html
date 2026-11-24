@@ -23,12 +23,13 @@
     >
       <label class="block space-y-1">
         <span class="text-sm font-medium text-emerald-800">Ingreso activo</span>
-        <select formControlName="idIngreso" class="w-full rounded-xl border border-emerald-200 px-3 py-2">
+        <select
+          formControlName="idIngreso"
+          class="w-full rounded-xl border border-emerald-200 px-3 py-2"
+        >
           <option value="">Selecciona…</option>
           @for (i of activos(); track i.idIngreso) {
-            <option [value]="i.idIngreso">
-              #{{ i.idIngreso }} · bici {{ i.idBicicleta }} · espacio {{ i.idEspacio }}
-            </option>
+            <option [value]="i.idIngreso">{{ labelIngreso(i) }}</option>
           }
         </select>
       </label>
@@ -74,7 +75,7 @@
             class="rounded-[var(--radius-card)] border border-emerald-100 bg-white p-4 shadow-sm"
           >
             <p class="font-semibold text-emerald-950">
-              Salida #{{ s.idSalida }} · ingreso {{ s.idIngreso }}
+              Salida #{{ s.idSalida }} · {{ labelIngresoId(s.idIngreso) }}
             </p>
             <p class="text-sm text-emerald-700">
               {{ s.fechaSalida | date: 'short' }}

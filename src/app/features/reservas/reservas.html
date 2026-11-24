@@ -21,7 +21,7 @@
         <select formControlName="idEspacio" class="w-full rounded-xl border border-emerald-200 px-3 py-2">
           <option value="">Selecciona…</option>
           @for (e of libres(); track e.idEspacio) {
-            <option [value]="e.idEspacio">{{ e.codigo }} (#{{ e.idEspacio }})</option>
+            <option [value]="e.idEspacio">{{ e.codigo }}</option>
           }
         </select>
       </label>
@@ -59,7 +59,7 @@
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <p class="font-semibold text-emerald-950">
-                  Reserva #{{ r.idReserva }} · espacio {{ r.idEspacio }}
+                  Reserva #{{ r.idReserva }} · {{ labelEspacio(r.idEspacio) }}
                 </p>
                 <p class="text-sm text-emerald-700">
                   Creada {{ r.fechaReserva | date: 'short' }} · vence

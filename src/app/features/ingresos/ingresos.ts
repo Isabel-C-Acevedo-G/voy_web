@@ -2,14 +2,19 @@ import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, of } from 'rxjs';
 
 import { Bicicleta } from '../../core/models/bicicleta.model';
+import { Espacio } from '../../core/models/espacio.model';
 import { Ingreso } from '../../core/models/ingreso.model';
+import { Reserva } from '../../core/models/reserva.model';
 import { AuthService } from '../../core/services/auth.service';
 import { BicicletaService } from '../../core/services/bicicleta.service';
+import { EspacioService } from '../../core/services/espacio.service';
 import { IngresoService } from '../../core/services/ingreso.service';
-import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
+import { ReservaService } from '../../core/services/reserva.service';
 import { FormListPage } from '../../shared/form-list-page/form-list-page';
+import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
 
 @Component({
   selector: 'app-ingresos',
@@ -21,6 +26,8 @@ import { FormListPage } from '../../shared/form-list-page/form-list-page';
 export class Ingresos implements OnInit {
   private readonly ingresosApi = inject(IngresoService);
   private readonly bicicletasApi = inject(BicicletaService);
+  private readonly reservasApi = inject(ReservaService);
+  private readonly espaciosApi = inject(EspacioService);
   private readonly auth = inject(AuthService);
   private readonly fb = inject(FormBuilder);
 
@@ -29,6 +36,9 @@ export class Ingresos implements OnInit {
   readonly pageSize = DEFAULT_PAGE_SIZE;
   readonly pageItems = computed(() => pageSlice(this.items(), this.page(), this.pageSize));
   readonly bicicletas = signal<Bicicleta[]>([]);
+  readonly bicicletasAll = signal<Bicicleta[]>([]);
+  readonly reservas = signal<Reserva[]>([]);
+  readonly espacios = signal<Espacio[]>([]);
   readonly loading = signal(true);
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
@@ -46,6 +56,39 @@ export class Ingresos implements OnInit {
       next: (list) => this.bicicletas.set(list),
       error: () => this.bicicletas.set([]),
     });
+    this.bicicletasApi
+      .list()
+      .pipe(catchError(() => of([])))
+      .subscribe((list) => this.bicicletasAll.set(list));
+    this.reservasApi
+      .list({ estado: 'activa' })
+      .pipe(catchError(() => of([])))
+      .subscribe((list) => this.reservas.set(list));
+    this.espaciosApi
+      .list()
+      .pipe(catchError(() => of([])))
+      .subscribe((list) => this.espacios.set(list));
+  }
+
+  labelBici(b: Bicicleta): string {
+    return `${b.marca} ${b.modelo} · ${b.numeroSerie}`;
+  }
+
+  labelReserva(r: Reserva): string {
+    const esp = this.espacios().find((e) => e.idEspacio === r.idEspacio);
+    const codigo = esp?.codigo ?? `espacio #${r.idEspacio}`;
+    return `Reserva #${r.idReserva} · ${codigo}`;
+  }
+
+  labelEspacioId(id: number): string {
+    return this.espacios().find((e) => e.idEspacio === id)?.codigo ?? `#${id}`;
+  }
+
+  labelBiciId(id: number): string {
+    const b =
+      this.bicicletasAll().find((x) => x.idBicicleta === id) ??
+      this.bicicletas().find((x) => x.idBicicleta === id);
+    return b ? this.labelBici(b) : `bici #${id}`;
   }
 
   reload(): void {
@@ -94,6 +137,10 @@ export class Ingresos implements OnInit {
           this.lastCreated.set(ing);
           this.form.reset({ idBicicleta: '', idReserva: '', observaciones: '' });
           this.reload();
+          this.reservasApi
+            .list({ estado: 'activa' })
+            .pipe(catchError(() => of([])))
+            .subscribe((list) => this.reservas.set(list));
         },
         error: (err: HttpErrorResponse) => {
           this.saving.set(false);

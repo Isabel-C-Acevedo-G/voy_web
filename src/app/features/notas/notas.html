@@ -29,12 +29,16 @@
           </select>
         </label>
         <label class="block space-y-1">
-          <span class="text-sm font-medium text-emerald-800">idMovimiento</span>
-          <input
-            type="number"
+          <span class="text-sm font-medium text-emerald-800">Movimiento</span>
+          <select
             formControlName="idMovimiento"
             class="w-full rounded-xl border border-emerald-200 px-3 py-2"
-          />
+          >
+            <option value="">Selecciona…</option>
+            @for (m of createMovimientos(); track m.tipo + '-' + m.id) {
+              <option [value]="m.id">{{ m.label }}</option>
+            }
+          </select>
         </label>
         <label class="block space-y-1">
           <span class="text-sm font-medium text-emerald-800">Texto</span>
@@ -72,12 +76,16 @@
         </select>
       </label>
       <label class="block space-y-1">
-        <span class="text-sm font-medium text-emerald-800">idMovimiento</span>
-        <input
-          type="number"
+        <span class="text-sm font-medium text-emerald-800">Movimiento</span>
+        <select
           formControlName="idMovimiento"
           class="w-full rounded-xl border border-emerald-200 px-3 py-2"
-        />
+        >
+          <option value="">Todos</option>
+          @for (m of filterMovimientos(); track m.tipo + '-' + m.id) {
+            <option [value]="m.id">{{ m.label }}</option>
+          }
+        </select>
       </label>
       <button
         type="submit"

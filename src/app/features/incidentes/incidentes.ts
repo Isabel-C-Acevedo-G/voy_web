@@ -2,10 +2,15 @@ import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, of } from 'rxjs';
 
+import { Bicicleta } from '../../core/models/bicicleta.model';
 import { Incidente, TipoIncidente } from '../../core/models/incidente.model';
+import { Usuario } from '../../core/models/usuario.model';
 import { AuthService } from '../../core/services/auth.service';
+import { BicicletaService } from '../../core/services/bicicleta.service';
 import { IncidenteService } from '../../core/services/incidente.service';
+import { UsuarioService } from '../../core/services/usuario.service';
 import { FormListPage } from '../../shared/form-list-page/form-list-page';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
 
@@ -18,6 +23,8 @@ import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/paginatio
 })
 export class Incidentes implements OnInit {
   private readonly incidentesApi = inject(IncidenteService);
+  private readonly bicicletasApi = inject(BicicletaService);
+  private readonly usuariosApi = inject(UsuarioService);
   private readonly auth = inject(AuthService);
   private readonly fb = inject(FormBuilder);
 
@@ -25,6 +32,8 @@ export class Incidentes implements OnInit {
   readonly page = signal(1);
   readonly pageSize = DEFAULT_PAGE_SIZE;
   readonly pageItems = computed(() => pageSlice(this.items(), this.page(), this.pageSize));
+  readonly bicicletas = signal<Bicicleta[]>([]);
+  readonly usuarios = signal<Usuario[]>([]);
   readonly loading = signal(true);
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
@@ -39,7 +48,23 @@ export class Incidentes implements OnInit {
   });
 
   ngOnInit(): void {
+    this.bicicletasApi
+      .list()
+      .pipe(catchError(() => of([])))
+      .subscribe((list) => this.bicicletas.set(list));
+    this.usuariosApi
+      .list({ estado: 'activo' })
+      .pipe(catchError(() => of([])))
+      .subscribe((list) => this.usuarios.set(list));
     this.reload();
+  }
+
+  labelBici(b: Bicicleta): string {
+    return `${b.marca} · ${b.numeroSerie}`;
+  }
+
+  labelUsuario(u: Usuario): string {
+    return `${u.nombre} · ${u.correo}`;
   }
 
   reload(): void {

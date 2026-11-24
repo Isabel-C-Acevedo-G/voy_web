@@ -29,6 +29,7 @@ export class Reservas implements OnInit {
   readonly pageSize = DEFAULT_PAGE_SIZE;
   readonly pageItems = computed(() => pageSlice(this.items(), this.page(), this.pageSize));
   readonly libres = signal<Espacio[]>([]);
+  readonly espacios = signal<Espacio[]>([]);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly saving = signal(false);
@@ -39,9 +40,17 @@ export class Reservas implements OnInit {
   });
 
   ngOnInit(): void {
+    this.espaciosApi.list().subscribe({
+      next: (list) => this.espacios.set(list),
+      error: () => this.espacios.set([]),
+    });
     this.reload();
     // refresca “vence en…” cada 30s
     setInterval(() => this.now.set(Date.now()), 30_000);
+  }
+
+  labelEspacio(id: number): string {
+    return this.espacios().find((e) => e.idEspacio === id)?.codigo ?? `#${id}`;
   }
 
   reload(): void {
