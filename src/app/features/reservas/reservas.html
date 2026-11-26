@@ -62,8 +62,8 @@
                   Reserva #{{ r.idReserva }} · {{ labelEspacio(r.idEspacio) }}
                 </p>
                 <p class="text-sm text-emerald-700">
-                  Creada {{ r.fechaReserva | date: 'short' }} · vence
-                  {{ r.fechaExpiracion | date: 'short' }}
+                  Creada {{ asDate(r.fechaReserva) | date: 'short' }} · vence
+                  {{ asDate(r.fechaExpiracion) | date: 'short' }}
                 </p>
                 @if (r.estado === 'activa') {
                   <p

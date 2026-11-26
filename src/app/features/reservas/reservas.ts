@@ -8,6 +8,7 @@ import { Reserva } from '../../core/models/reserva.model';
 import { AuthService } from '../../core/services/auth.service';
 import { EspacioService } from '../../core/services/espacio.service';
 import { ReservaService } from '../../core/services/reserva.service';
+import { minutosRestantesHasta, parseApiDateTime } from '../../core/utils/api-datetime';
 import { DEFAULT_PAGE_SIZE, Pagination, pageSlice } from '../../shared/pagination/pagination';
 import { FormListPage } from '../../shared/form-list-page/form-list-page';
 
@@ -89,9 +90,14 @@ export class Reservas implements OnInit {
     }
   }
 
+  /** Normaliza ISO naive del API como UTC (para DatePipe y “Quedan”). */
+  asDate(iso: string): Date {
+    return parseApiDateTime(iso);
+  }
+
   minutosRestantes(expiraIso: string): number {
-    const ms = new Date(expiraIso).getTime() - this.now();
-    return Math.max(0, Math.floor(ms / 60_000));
+    // Lee this.now() para re-evaluar cuando el tick de 30s actualiza la señal.
+    return minutosRestantesHasta(expiraIso, this.now());
   }
 
   estaPorVencer(r: Reserva): boolean {
